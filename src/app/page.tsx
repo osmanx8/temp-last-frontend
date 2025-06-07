@@ -6,15 +6,15 @@ import LoadingModal from "@/components/LoadingModal";
 import { useContext } from "react";
 import UserContext from "@/contexts/usercontext";
 import { ToastContainer } from "react-toastify";
+import Mainpage from "@/components/mainpage";
 
 export default function Home() {
   const { loadingState } = useContext<any>(UserContext);
 
   return (
-    <main className="w-full flex min-h-screen flex-col items-center justify-between bg-black harlow">
+    <main className="flex flex-col justify-between items-center bg-black w-full min-h-screen harlow">
       <Header />
-      <Navbar />
-      <Footer />
+      <Mainpage />
       {loadingState && <LoadingModal />}
       <ToastContainer style={{ fontSize: 14 }} />
     </main>
