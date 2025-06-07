@@ -10,9 +10,19 @@
 
 @font-face {
   font-family: "Orbitron";
-  src: url("/fonts/Orbitron-Font/Orbitron-Black.ttf") format('truetype');
+  src: url("/fonts/Orbitron-Font/Orbitron-Black.ttf") format("truetype");
+}
+/* Remove number input spinners in Chrome, Safari, Edge */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
 
+/* Remove number input arrows in Firefox */
+input[type="number"] {
+  -moz-appearance: textfield;
+}
 /* width */
 ::-webkit-scrollbar {
   width: 4px;
@@ -61,9 +71,12 @@
 
 body {
   color: rgb(var(--foreground-rgb));
-  background: linear-gradient(to bottom,
+  background: linear-gradient(
+      to bottom,
       transparent,
-      rgb(var(--background-end-rgb))) rgb(var(--background-start-rgb));
+      rgb(var(--background-end-rgb))
+    )
+    rgb(var(--background-start-rgb));
 }
 
 .shadow-btn-inner {
@@ -97,7 +110,6 @@ body {
 }
 
 @keyframes bounce {
-
   0%,
   100% {
     transform: translateY(0);
@@ -306,7 +318,6 @@ body {
 }
 
 @keyframes image-bounce {
-
   0%,
   20%,
   50%,

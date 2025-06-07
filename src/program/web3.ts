@@ -1,0 +1,255 @@
+import {
+  ComputeBudgetProgram,
+  Connection,
+  Keypair,
+  PublicKey,
+  SYSVAR_CLOCK_PUBKEY,
+  SystemProgram,
+  Transaction,
+  clusterApiUrl,
+} from "@solana/web3.js";
+import * as anchor from "@coral-xyz/anchor";
+import idl from "./last_send.json";
+import { LastSend } from "./last_send";
+import { LAST_SENDER_PROGRAM_ID } from "./programId";
+import { GAME_STATE, GLOBAL_STATE, VAULT_SEED } from "./seed";
+import { AnchorError, Program } from "@coral-xyz/anchor";
+import { WalletContextState } from "@solana/wallet-adapter-react";
+import { errorAlert } from "@/components/Toast";
+import { execTx } from "./transaction";
+
+export const commitmentLevel = "processed";
+
+export const rcpUrl =
+  process.env.NEXT_PUBLIC_SOLANA_RPC || clusterApiUrl("devnet");
+export const connection = new Connection(rcpUrl, commitmentLevel);
+export const LastSendProgramId = new PublicKey(LAST_SENDER_PROGRAM_ID);
+export const pumpProgramInterface = JSON.parse(JSON.stringify(idl));
+
+export const initializeApi = async (wallet: WalletContextState) => {
+  const provider = new anchor.AnchorProvider(connection, wallet as any, {
+    preflightCommitment: "confirmed",
+  });
+  anchor.setProvider(provider);
+
+  const program = new Program(
+    pumpProgramInterface,
+    provider
+  ) as Program<LastSend>;
+
+  // check the connection
+  if (!wallet.publicKey || !connection) {
+    errorAlert("Wallet Not Connected");
+    return "WalletError";
+  }
+
+  try {
+    const [globalState] = PublicKey.findProgramAddressSync(
+      [Buffer.from(GLOBAL_STATE)],
+      program.programId
+    );
+    const transaction = new Transaction().add(
+      //Mint new tokens....Tx
+      ComputeBudgetProgram.setComputeUnitPrice({
+        microLamports: 60_000,
+      }),
+      ComputeBudgetProgram.setComputeUnitLimit({
+        units: 200_000,
+      })
+    );
+
+    const initGame = await program.methods
+      .initialize()
+      .accounts(globalState)
+      .instruction();
+
+    transaction.add(initGame);
+    transaction.feePayer = wallet.publicKey;
+    const blockhash = await connection.getLatestBlockhash();
+    transaction.recentBlockhash = blockhash.blockhash;
+
+    const txid = await execTx(transaction, connection, wallet, "confirmed");
+    console.log("🚀 ~ initializeApi ~ txid:", txid);
+
+    const globalStateAccount = await program.account.globalState.fetch(
+      globalState
+    );
+    console.log("initialized globalstate", globalStateAccount);
+
+    return txid;
+  } catch (error) {
+    return false;
+  }
+};
+
+export const createPoolApi = async (
+  wallet: WalletContextState,
+  gameTime: number
+) => {
+  const provider = new anchor.AnchorProvider(connection, wallet as any, {
+    preflightCommitment: "confirmed",
+  });
+  anchor.setProvider(provider);
+  const program = new Program(
+    pumpProgramInterface,
+    provider
+  ) as Program<LastSend>;
+
+  // check the connection
+  if (!wallet.publicKey || !connection) {
+    errorAlert("Wallet Not Connected");
+    return "WalletError";
+  }
+
+  try {
+    console.log(connection.rpcEndpoint, "llllllllllllllllllllllllllllll");
+    const [globalState] = PublicKey.findProgramAddressSync(
+      [Buffer.from(GLOBAL_STATE)],
+      program.programId
+    );
+    console.log("🚀 ~ globalState:", globalState.toBase58());
+    const globalStateAccount = await program.account.globalState.fetch(
+      globalState
+    );
+    console.log("🚀 ~ globalStateAccount:", globalStateAccount);
+    let game_id = globalStateAccount.totalCount;
+    console.log("🚀 ~ game_id:", game_id);
+    const gameIdBuffer = game_id.toArrayLike(Buffer, "le", 8);
+
+    const [gameState] = PublicKey.findProgramAddressSync(
+      [Buffer.from(GAME_STATE), gameIdBuffer],
+      program.programId
+    );
+    console.log("🚀 ~ gameState:", gameState.toBase58());
+
+    const [solVault] = PublicKey.findProgramAddressSync(
+      [Buffer.from(VAULT_SEED), gameIdBuffer],
+      program.programId
+    );
+    console.log("🚀 ~ solVault:", solVault.toBase58());
+    const transaction = new Transaction().add(
+      //Mint new tokens....Tx
+      ComputeBudgetProgram.setComputeUnitPrice({
+        microLamports: 60_000,
+      }),
+      ComputeBudgetProgram.setComputeUnitLimit({
+        units: 200_000,
+      })
+    );
+
+    const createGame = await program.methods
+      .createPool(new anchor.BN(gameTime))
+      .accounts({ admin: wallet.publicKey })
+      .instruction();
+
+    transaction.add(createGame);
+    transaction.feePayer = wallet.publicKey;
+    const blockhash = await connection.getLatestBlockhash();
+    transaction.recentBlockhash = blockhash.blockhash;
+
+    const txid = await execTx(transaction, connection, wallet, "confirmed");
+    console.log("🚀 ~ cratePoolApi ~ txid:", txid);
+
+    const gameStateAccount = await program.account.gameState.fetch(gameState);
+    console.log("created gamestate", gameStateAccount);
+
+    return gameStateAccount.gameId;
+  } catch (error) {
+    console.log("Error ", error);
+    return false;
+  }
+};
+
+export const claimApi = async (wallet: WalletContextState) => {
+  const provider = new anchor.AnchorProvider(connection, wallet as any, {
+    preflightCommitment: "confirmed",
+  });
+  anchor.setProvider(provider);
+  const program = new Program(
+    pumpProgramInterface,
+    provider
+  ) as Program<LastSend>;
+
+  // check the connection
+  if (!wallet.publicKey || !connection) {
+    errorAlert("Wallet Not Connected");
+    return "WalletError";
+  }
+
+  try {
+    console.log(connection.rpcEndpoint, "llllllllllllllllllllllllllllll");
+    const [globalState] = PublicKey.findProgramAddressSync(
+      [Buffer.from(GLOBAL_STATE)],
+      program.programId
+    );
+    console.log("🚀 ~ globalState:", globalState.toBase58());
+    const globalStateAccount = await program.account.globalState.fetch(
+      globalState
+    );
+    console.log("🚀 ~ globalStateAccount:", globalStateAccount);
+    let game_id = globalStateAccount.totalCount;
+    const gameIdBuffer = game_id.toArrayLike(Buffer, "le", 8);
+    const gameIdBuffer0 = game_id
+      .sub(new anchor.BN(1))
+      .toArrayLike(Buffer, "le", 8);
+
+    const [gameState] = PublicKey.findProgramAddressSync(
+      [Buffer.from(GAME_STATE), gameIdBuffer0],
+      program.programId
+    );
+    console.log("🚀 ~ gameState:", gameState.toBase58());
+    let gameStateAccount = await program.account.gameState.fetch(gameState);
+    let lastSender = gameStateAccount.lastSender;
+    let secondSender = gameStateAccount.secondSender;
+    let thirdSender = gameStateAccount.thirdSender;
+    let devWallet = globalStateAccount.developerWallet;
+
+    const [solVault] = PublicKey.findProgramAddressSync(
+      [Buffer.from(VAULT_SEED), gameIdBuffer0],
+      program.programId
+    );
+    const [nextSolVault] = PublicKey.findProgramAddressSync(
+      [Buffer.from(VAULT_SEED), gameIdBuffer],
+      program.programId
+    );
+    console.log("🚀 ~ solVault:", solVault.toBase58());
+
+    const transaction = new Transaction().add(
+      //Mint new tokens....Tx
+      ComputeBudgetProgram.setComputeUnitPrice({
+        microLamports: 60_000,
+      }),
+      ComputeBudgetProgram.setComputeUnitLimit({
+        units: 200_000,
+      })
+    );
+
+    const claim = await program.methods
+      .claim()
+      .accounts({
+        nextSolVault,
+        lastSender,
+        devWallet,
+        secondSender,
+        thirdSender,
+        admin: wallet.publicKey,
+      })
+      .instruction();
+
+    transaction.add(claim);
+    transaction.feePayer = wallet.publicKey;
+    const blockhash = await connection.getLatestBlockhash();
+    transaction.recentBlockhash = blockhash.blockhash;
+
+    const txid = await execTx(transaction, connection, wallet, "confirmed");
+    console.log("🚀 ~ claimApi ~ txid:", txid);
+
+    gameStateAccount = await program.account.gameState.fetch(gameState);
+    console.log("claim gamestate", gameStateAccount);
+
+    return gameStateAccount;
+  } catch (error) {
+    console.log("Error ", error);
+    return false;
+  }
+};

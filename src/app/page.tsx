@@ -1,12 +1,12 @@
-"use client"
+"use client";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
 import LoadingModal from "@/components/LoadingModal";
 import { useContext } from "react";
-import UserContext from "@/contexts/usercontext";
+import UserContext from "@/context/usercontext";
 import { ToastContainer } from "react-toastify";
-import Mainpage from "@/components/mainpage";
+import Mainpage from "@/components/Mainpage";
 
 export default function Home() {
   const { loadingState } = useContext<any>(UserContext);

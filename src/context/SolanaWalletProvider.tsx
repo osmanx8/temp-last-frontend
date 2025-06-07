@@ -1,3 +1,5 @@
+"use client";
+
 import {
   ConnectionProvider,
   WalletProvider,
@@ -13,7 +15,7 @@ export const SolanaWalletProvider = ({ children }: { children: ReactNode }) => {
   // const network = WalletAdapterNetwork.Mainnet;
 
   // You can also provide a custom RPC endpoint.
-  const endpoint = clusterApiUrl('mainnet-beta');
+  const endpoint = clusterApiUrl("mainnet-beta");
 
   const wallets = [new SolflareWalletAdapter()];
 
