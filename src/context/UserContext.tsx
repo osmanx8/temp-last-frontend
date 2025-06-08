@@ -14,6 +14,10 @@ const UserContext = createContext({
   setSolAmount: (value: number) => {},
   leftTime: 0,
   setLeftTime: (value: number) => {},
+  atStartTime: "",
+  setAtStartTime: (value: string) => {},
+  timeDuration: 0,
+  setTimeDuration: (valud: number) => {},
 });
 
 export default UserContext;

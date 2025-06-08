@@ -1,47 +1,80 @@
 "use client";
 import Link from "next/link";
-import { useContext, useRef, useState } from "react";
-import UserContext from "@/context/usercontext";
+import { useContext, useEffect, useRef, useState } from "react";
+import UserContext from "@/context/UserContext";
 import { stakingSolApi } from "@/program/web3";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { errorAlert, successAlert } from "./Toast";
 import { set } from "@coral-xyz/anchor/dist/cjs/utils/features";
+import { useAuth } from "@/context/AuthContext";
 
 export default function Mainpage() {
+  const account = useAuth();
   const [currentSol, setCurrentSol] = useState<number>(0);
+  const [time, setTime] = useState<number>(0);
   const wallet = useWallet();
-  const {
-    gameIndex,
-    setGameIndex,
-    solAmount,
-    setSolAmount,
-    leftTime,
-    setLeftTime,
-    lastSender,
-    setLastSender,
-    secondSender,
-    setSecondSender,
-    thirdSender,
-    setThirdsender,
-  } = useContext(UserContext);
+
   const border =
     "rounded-2xl border border-[rgba(63,62,67,0.40)] bg-[rgba(19,18,23,0.32)] lg:backdrop-blur-[24px]";
 
+  interface GameStateInfo {
+    gameId: number;
+    potBalance: number;
+    readableStartTime: string;
+    lastSender: string;
+    secondSender: string;
+    thirdSender: string;
+    timeDuration: number;
+  }
+  type CreatePoolApiResult = GameStateInfo | "WalletError" | false;
+
+  useEffect(() => {
+    if (account.timeDuration > 0) {
+      setTime(account.timeDuration);
+    }
+  }, [account.timeDuration]);
+
+  useEffect(() => {
+    if (time <= 0) return;
+    if (account.progress) {
+      const interval = setInterval(() => {
+        setTime((prev) => {
+          if (prev <= 1) {
+            clearInterval(interval);
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+      return () => clearInterval(interval);
+    }
+  }, [time, account.progress]);
+
   const stakingSol = async () => {
-    const res = await stakingSolApi(wallet, currentSol);
-    if (res !== "WalletError" || !res) {
+    const res: CreatePoolApiResult = await stakingSolApi(wallet, currentSol);
+    if (res == "WalletError" || !res) {
       errorAlert("stake sol was failed.");
     } else {
-      if (typeof res === "number") {
-        // setGameIndex();
-        // setSolAmount;
-        // setLeftTime;
-        // setLastSender;
-        // setSecondSender;
-        // setThirdsender;
-      }
-
       successAlert("stake sol success!");
+      const {
+        gameId,
+        potBalance,
+        readableStartTime,
+        lastSender,
+        secondSender,
+        thirdSender,
+        timeDuration,
+      } = res;
+      console.log("here ==>", gameId);
+      // setGameIndex(res.gameId);
+      account.setGameIndexs(gameId);
+      account.setSolAmounts(potBalance);
+      account.setLastSenders(lastSender);
+      account.setSecondSenders(secondSender);
+      account.setThirdsenders(thirdSender);
+      account.setAtStartTimes(readableStartTime);
+      account.setTimeDurations(timeDuration);
+      account.setProgresss(true);
       return;
     }
   };
@@ -65,29 +98,46 @@ export default function Mainpage() {
             </div>
             <div className="flex flex-col justify-center items-center gap-4">
               Gamestate
-              <div className="flex flex-row justify-center items-center p-2 border border-y-teal-500 border-dotted rounded-b-lg w-[200px]">
+              <div className="over-flow-hidden flex flex-row justify-center items-center p-2 border border-y-teal-500 border-dotted rounded-b-lg w-[500px]">
                 <div className="text-[#03F5A5]">Game Room Number</div>
-                <div className="mx-2 text-red-700"> : {gameIndex}</div>
+                <div className="mx-2 text-red-700"> : {account.gameIndex}</div>
               </div>
-              <div className="flex flex-row justify-center items-center gap-5 p-2 border border-y-teal-500 border-dotted rounded-b-lg w-[200px]">
+              <div className="over-flow-hidden flex flex-row justify-center items-center gap-5 p-2 border border-y-teal-500 border-dotted rounded-b-lg w-[500px]">
                 <div className="text-[#03F5A5]">Staked SOL Amount</div>
-                <div className="mx-2 text-red-700"> : {solAmount}</div>
+                <div className="mx-2 text-red-700"> : {account.solAmount}</div>
               </div>
-              <div className="flex flex-row justify-center items-center gap-5 p-2 border border-y-teal-500 border-dotted rounded-b-lg w-[200px]">
+              <div className="over-flow-hidden flex flex-row justify-center items-center gap-5 p-2 border border-y-teal-500 border-dotted rounded-b-lg w-[500px]">
                 <div className="text-[#03F5A5]">Left staking time</div>
-                <div className="mx-2 text-red-700"> : {leftTime}</div>
+                <div className="mx-2 text-red-700"> : {time}</div>
               </div>
-              <div className="flex flex-row justify-center items-center gap-5 p-2 border border-y-teal-500 border-dotted rounded-b-lg w-[200px]">
+              <div className="over-flow-hidden flex flex-row justify-center items-center gap-5 p-2 border border-y-teal-500 border-dotted rounded-b-lg w-[500px]">
                 <div className="text-[#03F5A5]">Last Staker</div>
-                <div className="mx-2 text-red-700"> : {lastSender}</div>
+                <div className="mx-2 text-red-700"> : {account.lastSender}</div>
               </div>
-              <div className="flex flex-row justify-center items-center gap-5 p-2 border border-y-teal-500 border-dotted rounded-b-lg w-[200px]">
+              <div className="over-flow-hidden flex flex-row justify-center items-center gap-5 p-2 border border-y-teal-500 border-dotted rounded-b-lg w-[500px]">
                 <div className="mx-2 text-[#03F5A5]">Second Staker</div>
-                <div className="text-red-700"> : {secondSender}</div>
+                <div className="text-red-700"> : {account.secondSender}</div>
               </div>
-              <div className="flex flex-row justify-center items-center gap-5 p-2 border border-y-teal-500 border-dotted rounded-b-lg w-[200px]">
+              <div className="over-flow-hidden flex flex-row justify-center items-center gap-5 p-2 border border-y-teal-500 border-dotted rounded-b-lg w-[500px]">
                 <div className="text-[#03F5A5]">Third Staker</div>
-                <div className="mx-2 text-red-700"> : {thirdSender}</div>
+                <div className="mx-2 text-red-700">
+                  {" "}
+                  : {account.thirdSender}
+                </div>
+              </div>
+              <div className="over-flow-hidden flex flex-row justify-center items-center gap-5 p-2 border border-y-teal-500 border-dotted rounded-b-lg w-[500px]">
+                <div className="text-[#03F5A5]">Start time</div>
+                <div className="mx-2 text-red-700">
+                  {" "}
+                  : {account.atStartTime}
+                </div>
+              </div>
+              <div className="over-flow-hidden flex flex-row justify-center items-center gap-5 p-2 border border-y-teal-500 border-dotted rounded-b-lg w-[500px]">
+                <div className="text-[#03F5A5]">Time duratrion</div>
+                <div className="mx-2 text-red-700">
+                  {" "}
+                  : {account.timeDuration}
+                </div>
               </div>
             </div>
           </div>

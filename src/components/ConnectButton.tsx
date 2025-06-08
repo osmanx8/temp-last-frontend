@@ -4,7 +4,7 @@ import { FC, useContext, useEffect } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { useWalletModal } from "@solana/wallet-adapter-react-ui";
 import { ArrowLine, ExitIcon, WalletIcon } from "./SvgIcon";
-import UserContext from "@/context/usercontext";
+import UserContext from "@/context/UserContext";
 import { errorAlert } from "@/components/Toast";
 
 const ConnectButton: FC = () => {

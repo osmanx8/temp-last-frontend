@@ -27,6 +27,7 @@ export const LastSendProgramId = new PublicKey(LAST_SENDER_PROGRAM_ID);
 export const pumpProgramInterface = JSON.parse(JSON.stringify(idl));
 
 export const initializeApi = async (wallet: WalletContextState) => {
+  console.log("clicked initialize");
   const provider = new anchor.AnchorProvider(connection, wallet as any, {
     preflightCommitment: "confirmed",
   });
@@ -51,7 +52,7 @@ export const initializeApi = async (wallet: WalletContextState) => {
     const transaction = new Transaction().add(
       //Mint new tokens....Tx
       ComputeBudgetProgram.setComputeUnitPrice({
-        microLamports: 60_000,
+        microLamports: 80_000,
       }),
       ComputeBudgetProgram.setComputeUnitLimit({
         units: 200_000,
@@ -60,17 +61,19 @@ export const initializeApi = async (wallet: WalletContextState) => {
 
     const initGame = await program.methods
       .initialize()
-      .accounts(globalState)
+      .accounts({ admin: wallet.publicKey, globalState })
       .instruction();
 
     transaction.add(initGame);
     transaction.feePayer = wallet.publicKey;
     const blockhash = await connection.getLatestBlockhash();
     transaction.recentBlockhash = blockhash.blockhash;
-
+    console.log("here");
     const txid = await execTx(transaction, connection, wallet, "confirmed");
     console.log("🚀 ~ initializeApi ~ txid:", txid);
-
+    if (txid == null) {
+      return false;
+    }
     const globalStateAccount = await program.account.globalState.fetch(
       globalState
     );
@@ -78,6 +81,7 @@ export const initializeApi = async (wallet: WalletContextState) => {
 
     return txid;
   } catch (error) {
+    console.log("error", error);
     return false;
   }
 };
@@ -149,7 +153,9 @@ export const createPoolApi = async (
 
     const txid = await execTx(transaction, connection, wallet, "confirmed");
     console.log("🚀 ~ cratePoolApi ~ txid:", txid);
-
+    if (txid == null) {
+      return false;
+    }
     //console
     let gameStateAccount = await program.account.gameState.fetch(gameState);
     console.log("claim gamestate", gameStateAccount);
@@ -168,7 +174,18 @@ export const createPoolApi = async (
       gameStateAccount.timeDuration.toNumber()
     );
 
-    return gameStateAccount.gameId;
+    const res = {
+      gameId: gameStateAccount.gameId.toNumber(),
+      potBalance: gameStateAccount.potBalance.toNumber(),
+      readableStartTime: new Date(
+        Number(gameStateAccount.atStartTime.toString()) * 1000
+      ).toLocaleString(),
+      lastSender: gameStateAccount.lastSender.toBase58(),
+      secondSender: gameStateAccount.secondSender.toBase58(),
+      thirdSender: gameStateAccount.thirdSender.toBase58(),
+      timeDuration: gameStateAccount.timeDuration.toNumber(),
+    };
+    return res;
   } catch (error) {
     console.log("Error ", error);
     return false;
@@ -219,7 +236,11 @@ export const stakingSolApi = async (
       [Buffer.from(VAULT_SEED), gameIdBuffer],
       program.programId
     );
-    console.log("🚀 ~ solVault:", solVault.toBase58());
+    const vaultBalanceLamports = await connection.getBalance(solVault);
+    const vaultBalanceSOL = vaultBalanceLamports / 1e9;
+
+    console.log(`Vault balance: ${vaultBalanceSOL} SOL`);
+    console.log("🚀 ~ solVault:balance", solVault.toBase58());
     const transaction = new Transaction().add(
       //Mint new tokens....Tx
       ComputeBudgetProgram.setComputeUnitPrice({
@@ -232,7 +253,7 @@ export const stakingSolApi = async (
 
     const stakeSol = await program.methods
       .stakeSol(new anchor.BN(game_id), new anchor.BN(currentSol))
-      .accounts({ admin: wallet.publicKey })
+      .accounts({})
       .instruction();
 
     transaction.add(stakeSol);
@@ -242,7 +263,9 @@ export const stakingSolApi = async (
 
     const txid = await execTx(transaction, connection, wallet, "confirmed");
     console.log("🚀 ~ staking sol lApi ~ txid:", txid);
-
+    if (!txid) {
+      return false;
+    }
     //console
     let gameStateAccount = await program.account.gameState.fetch(gameState);
     console.log("claim gamestate", gameStateAccount);
@@ -261,7 +284,18 @@ export const stakingSolApi = async (
       gameStateAccount.timeDuration.toNumber()
     );
 
-    return gameStateAccount.gameId;
+    const res = {
+      gameId: gameStateAccount.gameId.toNumber(),
+      potBalance: gameStateAccount.potBalance.toNumber(),
+      readableStartTime: new Date(
+        Number(gameStateAccount.atStartTime.toString()) * 1000
+      ).toLocaleString(),
+      lastSender: gameStateAccount.lastSender.toBase58(),
+      secondSender: gameStateAccount.secondSender.toBase58(),
+      thirdSender: gameStateAccount.thirdSender.toBase58(),
+      timeDuration: gameStateAccount.timeDuration.toNumber(),
+    };
+    return res;
   } catch (error) {
     console.log("Error ", error);
     return false;
@@ -269,6 +303,7 @@ export const stakingSolApi = async (
 };
 
 export const claimApi = async (wallet: WalletContextState) => {
+  console.log("claimApi call");
   const provider = new anchor.AnchorProvider(connection, wallet as any, {
     preflightCommitment: "confirmed",
   });
@@ -277,13 +312,11 @@ export const claimApi = async (wallet: WalletContextState) => {
     pumpProgramInterface,
     provider
   ) as Program<LastSend>;
-
   // check the connection
   if (!wallet.publicKey || !connection) {
     errorAlert("Wallet Not Connected");
     return "WalletError";
   }
-
   try {
     console.log(connection.rpcEndpoint, "llllllllllllllllllllllllllllll");
     const [globalState] = PublicKey.findProgramAddressSync(
@@ -316,6 +349,9 @@ export const claimApi = async (wallet: WalletContextState) => {
       [Buffer.from(VAULT_SEED), gameIdBuffer0],
       program.programId
     );
+    const balance = await connection.getBalance(solVault);
+    console.log("solVault Current balance:", balance / 1e9, "SOL");
+
     const [nextSolVault] = PublicKey.findProgramAddressSync(
       [Buffer.from(VAULT_SEED), gameIdBuffer],
       program.programId
@@ -335,7 +371,6 @@ export const claimApi = async (wallet: WalletContextState) => {
     const claim = await program.methods
       .claim()
       .accounts({
-        nextSolVault,
         lastSender,
         devWallet,
         secondSender,
@@ -346,12 +381,16 @@ export const claimApi = async (wallet: WalletContextState) => {
 
     transaction.add(claim);
     transaction.feePayer = wallet.publicKey;
+    console.log("🚀 ~ claimApi ~ publicKey:", wallet.publicKey.toBase58());
+
     const blockhash = await connection.getLatestBlockhash();
     transaction.recentBlockhash = blockhash.blockhash;
 
     const txid = await execTx(transaction, connection, wallet, "confirmed");
     console.log("🚀 ~ claimApi ~ txid:", txid);
-
+    if (txid == null) {
+      return false;
+    }
     //console
     gameStateAccount = await program.account.gameState.fetch(gameState);
     console.log("claim gamestate", gameStateAccount);
@@ -373,8 +412,18 @@ export const claimApi = async (wallet: WalletContextState) => {
       "next solvalut balance",
       await connection.getBalance(nextSolVault)
     );
-
-    return gameStateAccount;
+    const res = {
+      gameId: gameStateAccount.gameId.toNumber(),
+      potBalance: gameStateAccount.potBalance.toNumber(),
+      readableStartTime: new Date(
+        Number(gameStateAccount.atStartTime.toString()) * 1000
+      ).toLocaleString(),
+      lastSender: gameStateAccount.lastSender.toBase58(),
+      secondSender: gameStateAccount.secondSender.toBase58(),
+      thirdSender: gameStateAccount.thirdSender.toBase58(),
+      timeDuration: gameStateAccount.timeDuration.toNumber(),
+    };
+    return res;
   } catch (error) {
     console.log("Error ", error);
     return false;

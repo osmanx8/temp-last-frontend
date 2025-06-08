@@ -11,6 +11,7 @@ export const execTx = async (
     if (!payer.signTransaction) {
       throw new Error("Wallet does not support signing transactions.");
     }
+
     //  Sign the transaction with payer wallet
     const signedTx = await payer.signTransaction(transaction);
     // Serialize, send and confirm the transaction
@@ -35,7 +36,7 @@ export const execTx = async (
       }
     } catch (error) {
       console.log("confirm error: ", error);
-      return error;
+      return false;
     }
   } catch (e) {
     console.log("confirm transaction error: ", e);

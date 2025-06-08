@@ -1,63 +1,95 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
-import { initialize } from "next/dist/server/lib/render-server";
 import Link from "next/link";
 import { useContext, useState } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { claimApi, createPoolApi, initializeApi } from "@/program/web3";
 import { errorAlert, successAlert } from "@/components/Toast";
-import UserContext from "@/context/usercontext";
+import { useAuth } from "@/context/AuthContext";
 
 export default function Admin() {
-  const {
-    gameIndex,
-    setGameIndex,
-    solAmount,
-    setSolAmount,
-    leftTime,
-    setLeftTime,
-    lastSender,
-    setLastSender,
-    secondSender,
-    setSecondSender,
-    thirdSender,
-    setThirdsender,
-  } = useContext(UserContext);
+  const account = useAuth();
 
   const wallet = useWallet();
   const [gameTime, setGameTime] = useState(0);
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setGameTime(Number(e.target.value));
   };
+
+  //creatre pool
+  interface GameStateInfo {
+    gameId: number;
+    potBalance: number;
+    readableStartTime: string;
+    lastSender: string;
+    secondSender: string;
+    thirdSender: string;
+    timeDuration: number;
+  }
+  type CreatePoolApiResult = GameStateInfo | "WalletError" | false;
   const createPool = async () => {
     console.log("click create pool");
-    const res = await createPoolApi(wallet, gameTime);
-    if (res !== "WalletError" || !res) {
+    const res: CreatePoolApiResult = await createPoolApi(wallet, gameTime);
+    if (res == "WalletError" || !res) {
       errorAlert("createPool was failed.");
+      return;
     } else {
+      console.log("success create pool", res);
       successAlert("createPool success!");
+      const {
+        gameId,
+        potBalance,
+        readableStartTime,
+        lastSender,
+        secondSender,
+        thirdSender,
+        timeDuration,
+      } = res;
+      account.setGameIndexs(gameId);
+      account.setSolAmounts(potBalance);
+      account.setLastSenders(lastSender);
+      account.setSecondSenders(secondSender);
+      account.setThirdsenders(thirdSender);
+      account.setAtStartTimes(readableStartTime);
+      account.setTimeDurations(timeDuration);
+      return;
     }
   };
   const initialize = async () => {
     const res = await initializeApi(wallet);
-    if (res !== "WalletError" || !res) {
+    if (res == "WalletError" || !res) {
       errorAlert("initialize was failed.");
       return;
     }
     successAlert("initialize success!");
-    if (typeof res === "number") {
-      setGameIndex(res);
-    }
     return;
   };
+
   const claim = async () => {
-    const res = await claimApi(wallet);
-    if (res !== "WalletError" || !res) {
+    console.log("clicked claim");
+    const res: CreatePoolApiResult = await claimApi(wallet);
+    if (res == "WalletError" || !res) {
       errorAlert("initialize was failed.");
       return;
     }
     successAlert("initialize success!");
-    return;
+    const {
+      gameId,
+      potBalance,
+      readableStartTime,
+      lastSender,
+      secondSender,
+      thirdSender,
+      timeDuration,
+    } = res;
+    account.setGameIndexs(gameId);
+    account.setSolAmounts(potBalance);
+    account.setLastSenders(lastSender);
+    account.setSecondSenders(secondSender);
+    account.setThirdsenders(thirdSender);
+    account.setAtStartTimes(readableStartTime);
+    account.setTimeDurations(timeDuration);
+    account.setProgresss(false);
   };
   return (
     <>
