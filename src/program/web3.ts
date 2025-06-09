@@ -17,6 +17,8 @@ import { AnchorError, Program } from "@coral-xyz/anchor";
 import { WalletContextState } from "@solana/wallet-adapter-react";
 import { errorAlert } from "@/components/Toast";
 import { execTx } from "./transaction";
+import { claimTX, createPoolTX, stakeSolTX } from "@/utils/util";
+import { claimInfo, createPoolInfo, stakeSolInfo } from "@/utils/types";
 
 export const commitmentLevel = "processed";
 
@@ -71,6 +73,7 @@ export const initializeApi = async (wallet: WalletContextState) => {
     console.log("here");
     const txid = await execTx(transaction, connection, wallet, "confirmed");
     console.log("🚀 ~ initializeApi ~ txid:", txid);
+
     if (txid == null) {
       return false;
     }
@@ -185,6 +188,17 @@ export const createPoolApi = async (
       thirdSender: gameStateAccount.thirdSender.toBase58(),
       timeDuration: gameStateAccount.timeDuration.toNumber(),
     };
+
+    const value: createPoolInfo = {
+      game_id: res.gameId,
+      game_time_duration: res.timeDuration,
+      is_pool_open: globalStateAccount.isPoolOpen,
+      is_claimed: gameStateAccount.claimed,
+    };
+    console.log("web3 value", value);
+    const result = await createPoolTX(value);
+    console.log("🚀 ~ result:", result);
+
     return res;
   } catch (error) {
     console.log("Error ", error);
@@ -295,6 +309,23 @@ export const stakingSolApi = async (
       thirdSender: gameStateAccount.thirdSender.toBase58(),
       timeDuration: gameStateAccount.timeDuration.toNumber(),
     };
+
+    const value: stakeSolInfo = {
+      user: wallet.publicKey.toBase58(),
+      game_id: res.gameId,
+      pot_balance: res.potBalance,
+      stake_sol: currentSol,
+      last_sender: res.lastSender,
+      second_sender: res.secondSender,
+      third_sender: res.thirdSender,
+      at_start_time: new Date(
+        Number(gameStateAccount.atStartTime.toString()) * 1000
+      ),
+      game_time_duration: res.timeDuration,
+    };
+    const rerult = await stakeSolTX(value);
+    console.log("🚀 ~ rerult:", rerult);
+
     return res;
   } catch (error) {
     console.log("Error ", error);
@@ -423,6 +454,14 @@ export const claimApi = async (wallet: WalletContextState) => {
       thirdSender: gameStateAccount.thirdSender.toBase58(),
       timeDuration: gameStateAccount.timeDuration.toNumber(),
     };
+
+    const value: claimInfo = {
+      game_id: gameStateAccount.gameId.toNumber(),
+      is_claimed: gameStateAccount.claimed,
+      is_pool_open: globalStateAccount.isPoolOpen,
+    };
+    const result = await claimTX(value);
+    console.log("result", result);
     return res;
   } catch (error) {
     console.log("Error ", error);
