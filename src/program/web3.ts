@@ -196,8 +196,8 @@ export const createPoolApi = async (
       is_claimed: gameStateAccount.claimed,
     };
     console.log("web3 value", value);
-    const result = await createPoolTX(value);
-    console.log("🚀 ~ result:", result);
+    //  const result = await createPoolTX(value);
+    //  console.log("🚀 ~ result:", result);
 
     return res;
   } catch (error) {
@@ -323,8 +323,8 @@ export const stakingSolApi = async (
       ),
       game_time_duration: res.timeDuration,
     };
-    const rerult = await stakeSolTX(value);
-    console.log("🚀 ~ rerult:", rerult);
+    // const rerult = await stakeSolTX(value);
+    // console.log("🚀 ~ rerult:", rerult);
 
     return res;
   } catch (error) {
@@ -460,8 +460,8 @@ export const claimApi = async (wallet: WalletContextState) => {
       is_claimed: gameStateAccount.claimed,
       is_pool_open: globalStateAccount.isPoolOpen,
     };
-    const result = await claimTX(value);
-    console.log("result", result);
+    // const result = await claimTX(value);
+    // console.log("result", result);
     return res;
   } catch (error) {
     console.log("Error ", error);

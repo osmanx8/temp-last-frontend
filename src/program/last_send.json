@@ -1,5 +1,5 @@
 {
-  "address": "Hsaem3ZJSxooCtFbgfLqkqmGUpjgy9fwYFyutu4pyF1m",
+  "address": "WTBjMZvbPqUVgnm1wLbcQFVSoRcAB4G896D1mpMVeco",
   "metadata": {
     "name": "last_send",
     "version": "0.1.0",
@@ -9,16 +9,7 @@
   "instructions": [
     {
       "name": "claim",
-      "discriminator": [
-        62,
-        198,
-        214,
-        193,
-        213,
-        159,
-        108,
-        210
-      ],
+      "discriminator": [62, 198, 214, 193, 213, 159, 108, 210],
       "accounts": [
         {
           "name": "global_state",
@@ -27,46 +18,20 @@
             "seeds": [
               {
                 "kind": "const",
-                "value": [
-                  71,
-                  76,
-                  79,
-                  66,
-                  65,
-                  76,
-                  95,
-                  83,
-                  84,
-                  65,
-                  84,
-                  69
-                ]
+                "value": [71, 76, 79, 66, 65, 76, 95, 83, 84, 65, 84, 69]
               }
             ]
           }
         },
         {
           "name": "sol_vault",
-          "docs": [
-            "CHECK"
-          ],
+          "docs": ["CHECK"],
           "writable": true,
           "pda": {
             "seeds": [
               {
                 "kind": "const",
-                "value": [
-                  86,
-                  65,
-                  85,
-                  76,
-                  84,
-                  95,
-                  83,
-                  69,
-                  69,
-                  68
-                ]
+                "value": [86, 65, 85, 76, 84, 95, 83, 69, 69, 68]
               },
               {
                 "kind": "account",
@@ -83,18 +48,7 @@
             "seeds": [
               {
                 "kind": "const",
-                "value": [
-                  71,
-                  65,
-                  77,
-                  69,
-                  95,
-                  83,
-                  84,
-                  65,
-                  84,
-                  69
-                ]
+                "value": [71, 65, 77, 69, 95, 83, 84, 65, 84, 69]
               },
               {
                 "kind": "account",
@@ -111,18 +65,7 @@
             "seeds": [
               {
                 "kind": "const",
-                "value": [
-                  86,
-                  65,
-                  85,
-                  76,
-                  84,
-                  95,
-                  83,
-                  69,
-                  69,
-                  68
-                ]
+                "value": [86, 65, 85, 76, 84, 95, 83, 69, 69, 68]
               },
               {
                 "kind": "account",
@@ -166,16 +109,7 @@
     },
     {
       "name": "create_pool",
-      "discriminator": [
-        233,
-        146,
-        209,
-        142,
-        207,
-        104,
-        64,
-        188
-      ],
+      "discriminator": [233, 146, 209, 142, 207, 104, 64, 188],
       "accounts": [
         {
           "name": "global_state",
@@ -184,20 +118,7 @@
             "seeds": [
               {
                 "kind": "const",
-                "value": [
-                  71,
-                  76,
-                  79,
-                  66,
-                  65,
-                  76,
-                  95,
-                  83,
-                  84,
-                  65,
-                  84,
-                  69
-                ]
+                "value": [71, 76, 79, 66, 65, 76, 95, 83, 84, 65, 84, 69]
               }
             ]
           }
@@ -209,18 +130,7 @@
             "seeds": [
               {
                 "kind": "const",
-                "value": [
-                  71,
-                  65,
-                  77,
-                  69,
-                  95,
-                  83,
-                  84,
-                  65,
-                  84,
-                  69
-                ]
+                "value": [71, 65, 77, 69, 95, 83, 84, 65, 84, 69]
               },
               {
                 "kind": "account",
@@ -237,18 +147,7 @@
             "seeds": [
               {
                 "kind": "const",
-                "value": [
-                  86,
-                  65,
-                  85,
-                  76,
-                  84,
-                  95,
-                  83,
-                  69,
-                  69,
-                  68
-                ]
+                "value": [86, 65, 85, 76, 84, 95, 83, 69, 69, 68]
               },
               {
                 "kind": "account",
@@ -277,16 +176,7 @@
     },
     {
       "name": "initialize",
-      "discriminator": [
-        175,
-        175,
-        109,
-        31,
-        13,
-        152,
-        155,
-        237
-      ],
+      "discriminator": [175, 175, 109, 31, 13, 152, 155, 237],
       "accounts": [
         {
           "name": "global_state",
@@ -295,20 +185,7 @@
             "seeds": [
               {
                 "kind": "const",
-                "value": [
-                  71,
-                  76,
-                  79,
-                  66,
-                  65,
-                  76,
-                  95,
-                  83,
-                  84,
-                  65,
-                  84,
-                  69
-                ]
+                "value": [71, 76, 79, 66, 65, 76, 95, 83, 84, 65, 84, 69]
               }
             ]
           }
@@ -331,16 +208,7 @@
     },
     {
       "name": "stake_sol",
-      "discriminator": [
-        200,
-        38,
-        157,
-        155,
-        245,
-        57,
-        236,
-        168
-      ],
+      "discriminator": [200, 38, 157, 155, 245, 57, 236, 168],
       "accounts": [
         {
           "name": "global_state",
@@ -349,20 +217,7 @@
             "seeds": [
               {
                 "kind": "const",
-                "value": [
-                  71,
-                  76,
-                  79,
-                  66,
-                  65,
-                  76,
-                  95,
-                  83,
-                  84,
-                  65,
-                  84,
-                  69
-                ]
+                "value": [71, 76, 79, 66, 65, 76, 95, 83, 84, 65, 84, 69]
               }
             ]
           }
@@ -374,18 +229,7 @@
             "seeds": [
               {
                 "kind": "const",
-                "value": [
-                  86,
-                  65,
-                  85,
-                  76,
-                  84,
-                  95,
-                  83,
-                  69,
-                  69,
-                  68
-                ]
+                "value": [86, 65, 85, 76, 84, 95, 83, 69, 69, 68]
               },
               {
                 "kind": "arg",
@@ -401,18 +245,7 @@
             "seeds": [
               {
                 "kind": "const",
-                "value": [
-                  71,
-                  65,
-                  77,
-                  69,
-                  95,
-                  83,
-                  84,
-                  65,
-                  84,
-                  69
-                ]
+                "value": [71, 65, 77, 69, 95, 83, 84, 65, 84, 69]
               },
               {
                 "kind": "arg",
@@ -450,83 +283,29 @@
   "accounts": [
     {
       "name": "GameState",
-      "discriminator": [
-        144,
-        94,
-        208,
-        172,
-        248,
-        99,
-        134,
-        120
-      ]
+      "discriminator": [144, 94, 208, 172, 248, 99, 134, 120]
     },
     {
       "name": "GlobalState",
-      "discriminator": [
-        163,
-        46,
-        74,
-        168,
-        216,
-        123,
-        133,
-        98
-      ]
+      "discriminator": [163, 46, 74, 168, 216, 123, 133, 98]
     }
   ],
   "events": [
     {
       "name": "ClaimEvent",
-      "discriminator": [
-        93,
-        15,
-        70,
-        170,
-        48,
-        140,
-        212,
-        219
-      ]
+      "discriminator": [93, 15, 70, 170, 48, 140, 212, 219]
     },
     {
       "name": "CreatePoolEvent",
-      "discriminator": [
-        177,
-        49,
-        12,
-        210,
-        160,
-        118,
-        167,
-        116
-      ]
+      "discriminator": [177, 49, 12, 210, 160, 118, 167, 116]
     },
     {
       "name": "InitializedEvent",
-      "discriminator": [
-        136,
-        202,
-        63,
-        120,
-        152,
-        146,
-        41,
-        79
-      ]
+      "discriminator": [136, 202, 63, 120, 152, 146, 41, 79]
     },
     {
       "name": "StakeSolEvent",
-      "discriminator": [
-        10,
-        44,
-        142,
-        57,
-        77,
-        57,
-        25,
-        134
-      ]
+      "discriminator": [10, 44, 142, 57, 77, 57, 25, 134]
     }
   ],
   "errors": [
@@ -628,6 +407,10 @@
         "kind": "struct",
         "fields": [
           {
+            "name": "game_id",
+            "type": "u64"
+          },
+          {
             "name": "is_claimed",
             "type": "bool"
           },
@@ -643,6 +426,10 @@
       "type": {
         "kind": "struct",
         "fields": [
+          {
+            "name": "game_id",
+            "type": "u64"
+          },
           {
             "name": "game_time_duration",
             "type": "u64"
@@ -840,7 +627,7 @@
             "type": "u64"
           },
           {
-            "name": "stake_sol",
+            "name": "pot_balance",
             "type": "u64"
           },
           {
@@ -848,7 +635,15 @@
             "type": "pubkey"
           },
           {
-            "name": "ar_start_time",
+            "name": "second_sender",
+            "type": "pubkey"
+          },
+          {
+            "name": "third_sender",
+            "type": "pubkey"
+          },
+          {
+            "name": "at_start_time",
             "type": "i64"
           },
           {
