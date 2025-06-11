@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useContext, useState } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { claimApi, createPoolApi, initializeApi } from "@/program/web3";
-import { errorAlert, successAlert } from "@/components/Toast";
+import { errorAlert, successAlert } from "@/components/others/Toast";
 import { useAuth } from "@/context/AuthContext";
 
 export default function Admin() {

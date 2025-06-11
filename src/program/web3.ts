@@ -15,7 +15,7 @@ import { LAST_SENDER_PROGRAM_ID } from "./programId";
 import { GAME_STATE, GLOBAL_STATE, VAULT_SEED } from "./seed";
 import { AnchorError, Program } from "@coral-xyz/anchor";
 import { WalletContextState } from "@solana/wallet-adapter-react";
-import { errorAlert } from "@/components/Toast";
+import { errorAlert } from "@/components/others/Toast";
 import { execTx } from "./transaction";
 import { claimTX, createPoolTX, stakeSolTX } from "@/utils/util";
 import { claimInfo, createPoolInfo, stakeSolInfo } from "@/utils/types";
@@ -63,7 +63,7 @@ export const initializeApi = async (wallet: WalletContextState) => {
 
     const initGame = await program.methods
       .initialize()
-      .accounts({ admin: wallet.publicKey, globalState })
+      .accounts({ admin: wallet.publicKey })
       .instruction();
 
     transaction.add(initGame);

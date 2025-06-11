@@ -3,6 +3,8 @@ import React, { ReactNode, useState } from "react";
 import UserContext from "@/context/UserContext";
 import { SolanaWalletProvider } from "@/context/SolanaWalletProvider";
 import { AuthProvider } from "@/context/AuthContext";
+import Header from "@/components/header/Header";
+import Footer from "@/components/footer/Footer";
 
 export default function Providers({ children }: { children: ReactNode }) {
   const [lastSender, setLastSender] = useState<string>("");
@@ -13,12 +15,15 @@ export default function Providers({ children }: { children: ReactNode }) {
   const [leftTime, setLeftTime] = useState<number>(0);
   const [atStartTime, setAtStartTime] = useState<string>("");
   const [timeDuration, setTimeDuration] = useState<number>(0);
+  const [adminModal, setAdminModal] = useState<boolean>(false)
 
   return (
     <SolanaWalletProvider>
       <AuthProvider>
         <UserContext.Provider
           value={{
+            adminModal,
+            setAdminModal,
             lastSender,
             setLastSender,
             secondSender,
@@ -36,8 +41,11 @@ export default function Providers({ children }: { children: ReactNode }) {
             timeDuration,
             setTimeDuration,
           }}
-        ></UserContext.Provider>
-        {children}
+        >
+          <Header />
+          {children}
+          <Footer />
+        </UserContext.Provider>
       </AuthProvider>
     </SolanaWalletProvider>
   );

@@ -1,5 +1,6 @@
 import { PublicKey } from "@solana/web3.js";
 import BN from "bn.js";
+import { StaticImageData } from "next/image";
 
 export type createPoolInfo = {
   game_id: number;
@@ -25,3 +26,15 @@ export type claimInfo = {
   is_claimed: boolean;
   is_pool_open: boolean;
 };
+
+export interface KingCardData {
+  address: string;
+  reward: number;
+  image: StaticImageData;
+}
+
+export interface LiveFeedCardData {
+  time: string;
+  address: string;
+  amount: string;
+}

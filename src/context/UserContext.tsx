@@ -2,22 +2,24 @@
 import { createContext } from "react";
 
 const UserContext = createContext({
+  adminModal: false,
+  setAdminModal: (value: boolean) => { },
   lastSender: "",
-  setLastSender: (value: string) => {},
+  setLastSender: (value: string) => { },
   secondSender: "",
-  setSecondSender: (value: string) => {},
+  setSecondSender: (value: string) => { },
   thirdSender: "",
-  setThirdsender: (value: string) => {},
+  setThirdsender: (value: string) => { },
   gameIndex: 0,
-  setGameIndex: (value: number) => {},
+  setGameIndex: (value: number) => { },
   solAmount: 0,
-  setSolAmount: (value: number) => {},
+  setSolAmount: (value: number) => { },
   leftTime: 0,
-  setLeftTime: (value: number) => {},
+  setLeftTime: (value: number) => { },
   atStartTime: "",
-  setAtStartTime: (value: string) => {},
+  setAtStartTime: (value: string) => { },
   timeDuration: 0,
-  setTimeDuration: (valud: number) => {},
+  setTimeDuration: (valud: number) => { },
 });
 
 export default UserContext;
