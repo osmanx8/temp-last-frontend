@@ -96,7 +96,7 @@ export default function Index() {
       <InviteTag />
       <FAQ />
       <PlayNow />
-      {adminModal && <AdminModal />}
+      {/* {adminModal && <AdminModal />} */}
     </div>
   );
 }

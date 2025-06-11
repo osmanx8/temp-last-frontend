@@ -31,11 +31,11 @@ const ConnectButton: FC = () => {
   }, [publicKey]);
 
   return (
-    <div className="group relative top-0 left-0 flex flex-col justify-center items-center shadow-btn-inner w-[220px] lg:w-[270px] h-[67px] text-white cursor-pointer">
+    <div className="group relative top-0 left-0 flex flex-col justify-center items-center shadow-btn-inner w-[140px] md:w-[200px] md2:w-[220px] lg:w-[270px] h-[40px] md:h-[52px] md2:h-[67px] text-white cursor-pointer">
       <div className="w-full h-full bg-[#1B5DB1] absolute top-1 right-1 rounded-[15px]"></div>
       {publicKey ? (
         <>
-          <div className="flex justify-center items-center text-[16px] lg:text-[24px] w-[220px] lg:w-[270px] h-[67px] bg-gradient-to-b from-[#234ACB] to-[#112565] border-[5px] border-[#60A5FA] rounded-[15px] z-10">
+          <div className="flex justify-center items-center text-[14px] md:text-[16px] lg:text-[24px] w-[140px] md:w-[200px] md2:w-[220px] lg:w-[270px] h-[40px] md:h-[52px] md2:h-[67px] bg-gradient-to-b from-[#234ACB] to-[#112565] border-[2px] md:border-[5px] border-[#60A5FA] rounded-[15px] z-10">
             {publicKey.toBase58().slice(0, 6)}....
             {publicKey.toBase58().slice(-6)}
           </div>
@@ -62,7 +62,7 @@ const ConnectButton: FC = () => {
         </>
       ) : (
         <div
-          className="flex justify-center items-center gap-1 text-[16px] lg:text-[24px] uppercase w-[220px] lg:w-[270px] h-[67px] z-10 bg-gradient-to-b from-[#234ACB] to-[#112565] border-[5px] border-[#60A5FA] rounded-[15px]"
+          className="flex justify-center items-center gap-1 text-[16px] lg:text-[24px] uppercase w-[140px] md:w-[200px] md2:w-[220px] lg:w-[270px] h-[40px] md:h-[52px] md2:h-[67px] z-10 bg-gradient-to-b from-[#234ACB] to-[#112565] border-[2px] md:border-[5px] border-[#60A5FA] rounded-[15px]"
           onClick={() => setVisible(true)}
         >
           Connect wallet

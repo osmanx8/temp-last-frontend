@@ -24,7 +24,7 @@ export const HowToPlayData = [
 
 export const FAQData = [
   { id: 1, title: "How does the game work?", text: "Yes! All transactions are on-chain and verifiable. The timer logic is implemented in our smart contract which is publicly auditable." },
-  { id: 2, title: "What is the Minimum/Maximum send amount?", text: "Yes! All transactions are on-chain and verifiable. The timer logic is implemented in our smart contract which is publicly auditable." },
+  { id: 2, title: "What is the Min/Max send amount?", text: "Yes! All transactions are on-chain and verifiable. The timer logic is implemented in our smart contract which is publicly auditable." },
   { id: 3, title: "How is the timing calculated?", text: "Yes! All transactions are on-chain and verifiable. The timer logic is implemented in our smart contract which is publicly auditable." },
   { id: 4, title: "How are winners paid?", text: "Yes! All transactions are on-chain and verifiable. The timer logic is implemented in our smart contract which is publicly auditable." },
   { id: 5, title: "Is the game provably Fair?", text: "Yes! All transactions are on-chain and verifiable. The timer logic is implemented in our smart contract which is publicly auditable." },

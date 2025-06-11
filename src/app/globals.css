@@ -32,8 +32,8 @@ input[type="number"] {
 
 /* width */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 10px;
+  height: 10px;
   background: #021433;
 }
 
@@ -45,7 +45,7 @@ input[type="number"] {
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
-  background: #9945FF;
+  background: linear-gradient(180deg, #1C9FF6 0%, #9945FF 100%);
   border-radius: 5px;
 }
 
@@ -171,4 +171,37 @@ body {
 .image-bounce {
   display: inline-block;
   animation: bounce 2s infinite;
+}
+
+.flip-clock {
+  --fcc-flip-duration: 0.5s;
+  /* transition duration when flip card */
+  --fcc-spacing: 8px;
+  /* space between unit times and separators */
+  --fcc-digit-block-width: 40px;
+  /* width of digit card */
+  --fcc-digit-block-height: 60px;
+  /* height of digit card, highly recommend in even number */
+  --fcc-digit-block-radius: 5px;
+  /* border radius of digit card */
+  --fcc-digit-block-spacing: 5px;
+  /* space between blocks in each unit of time */
+  --fcc-digit-font-size: 30px;
+  /* font size of digit */
+  --fcc-digit-color: white;
+  /* color of digit */
+  --fcc-label-font-size: 10px;
+  /* font size of label */
+  --fcc-label-color: #ffffff;
+  /* color of label */
+  --fcc-background: black;
+  /* background of digit card */
+  --fcc-divider-color: white;
+  /* color of divider */
+  --fcc-divider-height: 1px;
+  /* height of divider */
+  --fcc-separator-size: 6px;
+  /* size of colon */
+  --fcc-separator-color: red;
+  /* color of colon */
 }
