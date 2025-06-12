@@ -16,10 +16,72 @@ import InviteTag from "./InviteTag";
 import FAQ from "./FAQ";
 import PlayNow from "./PlayNow";
 import AdminModal from "../others/AdminModal";
+import { fetchTX } from "@/utils/util";
 
 export default function Index() {
   const account = useAuth();
-  const { adminModal } = useContext(UserContext);
+  const {
+    lastWiner,
+    setLastWiner,
+    winners,
+    setWinners,
+    stakers,
+    setStakers,
+    dailytotalSolWon,
+    setDailyTotalSolWon,
+    alltotalSolWon,
+    setAllTotalSolWon,
+    dailyroundsPlayed,
+    setDailyRoundsPlayed,
+    allroundsPlayed,
+    setAllRoundsPlayed,
+    allbiggestPrice,
+    setAllBiggestPrice,
+    dailybiggestPrice,
+    setDailyBiggestPrice,
+    potBalance,
+    setPotBalance,
+    dailyactivePlayers,
+    setDailyActivePlayers,
+    firstPlayer,
+    setFirstPlayer,
+    secondPlayer,
+    setSecondPlayer,
+    thirdPlayer,
+    setThirdPlayer,
+
+    progress,
+    setProgress,
+    allactivePlayers,
+    setAllActivePlayers,
+    firstPlayerSol,
+    setFirstPlayerSol,
+    secondPlayerSol,
+    setSecondPlayerSol,
+    thirdPlayerSol,
+    setThirdPlayerSol,
+    lastWinerSol,
+    setLastWinerSol,
+
+    adminModal,
+    setAdminModal,
+    lastSender,
+    setLastSender,
+    secondSender,
+    setSecondSender,
+    thirdSender,
+    setThirdsender,
+    gameIndex,
+    setGameIndex,
+    solAmount,
+    setSolAmount,
+    leftTime,
+    setLeftTime,
+    atStartTime,
+    setAtStartTime,
+    timeDuration,
+    setTimeDuration,
+  } = useContext(UserContext);
   const [currentSol, setCurrentSol] = useState<number>(0);
   const [time, setTime] = useState<number>(0);
   const wallet = useWallet();
@@ -35,59 +97,63 @@ export default function Index() {
   }
   type CreatePoolApiResult = GameStateInfo | "WalletError" | false;
 
-  useEffect(() => {
-    if (account.timeDuration > 0) {
-      setTime(account.timeDuration);
-    }
-  }, [account.timeDuration]);
+  // useEffect(() => {
+  //   if (timeDuration > 0) {
+  //     setTime(timeDuration);
+  //   }
+  // }, [timeDuration]);
+
+  // useEffect(() => {
+  //   if (time <= 0) return;
+  //   if (progress) {
+  //     const interval = setInterval(() => {
+  //       setTime((prev) => {
+  //         if (prev <= 1) {
+  //           clearInterval(interval);
+  //           return 0;
+  //         }
+  //         return prev - 1;
+  //       });
+  //     }, 1000);
+  //     return () => clearInterval(interval);
+  //   }
+  // }, [time,progress]);
+
+  // useEffect(()=>{
+  //   const res = await
+  // },[])
 
   useEffect(() => {
-    if (time <= 0) return;
-    if (account.progress) {
-      const interval = setInterval(() => {
-        setTime((prev) => {
-          if (prev <= 1) {
-            clearInterval(interval);
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
-      return () => clearInterval(interval);
-    }
-  }, [time, account.progress]);
-
-  const stakingSol = async () => {
-    const res: CreatePoolApiResult = await stakingSolApi(wallet, currentSol);
-    if (res == "WalletError" || !res) {
-      errorAlert("stake sol was failed.");
-    } else {
-      successAlert("stake sol success!");
-      const {
-        gameId,
-        potBalance,
-        readableStartTime,
-        lastSender,
-        secondSender,
-        thirdSender,
-        timeDuration,
-      } = res;
-      console.log("here ==>", gameId);
-      // setGameIndex(res.gameId);
-      account.setGameIndexs(gameId);
-      account.setSolAmounts(potBalance);
-      account.setLastSenders(lastSender);
-      account.setSecondSenders(secondSender);
-      account.setThirdsenders(thirdSender);
-      account.setAtStartTimes(readableStartTime);
-      account.setTimeDurations(timeDuration);
-      account.setProgresss(true);
-      return;
-    }
-  };
+    const fetchData = async () => {
+      try {
+        console.log("refresh....");
+        const res = await fetchTX();
+        if (!res) return;
+        console.log("reult", res);
+        setAtStartTime(res.data.startTime);
+        setTimeDuration(res.data.timeDuration);
+        setDailyRoundsPlayed(res.data.dailyroundsPlayed);
+        setAllRoundsPlayed(res.data.allroundsPlayed);
+        setDailyActivePlayers(res.data.dailyactivePlayers);
+        setAllActivePlayers(res.data.allactivePlayers);
+        setDailyTotalSolWon(res.data.dailytotalSolWon);
+        setAllTotalSolWon(res.data.alltotalSolWon);
+        setDailyBiggestPrice(res.data.dailybiggestPrice);
+        setAllBiggestPrice(res.data.allbiggestPrice);
+        setPotBalance(res.data.currentPot);
+        setLastWiner(res.data.lastWiner);
+        setWinners(res.data.winners);
+        setStakers(res.data.stakers);
+        ////||||
+      } catch (err) {
+        console.log("fetch res.err", err);
+      }
+    };
+    fetchData();
+  }, []);
 
   return (
-    <div className="flex flex-col justify-start items-center w-full h-full min-h-screen relative">
+    <div className="relative flex flex-col justify-start items-center w-full h-full min-h-screen">
       <PotCard />
       <Leaderboard />
       <LiveFeed />
@@ -96,12 +162,13 @@ export default function Index() {
       <InviteTag />
       <FAQ />
       <PlayNow />
-      {/* {adminModal && <AdminModal />} */}
+      {adminModal && <AdminModal />}
     </div>
   );
 }
 
-{/* <div className="flex flex-col gap-4 md:gap-8 w-full">
+{
+  /* <div className="flex flex-col gap-4 md:gap-8 w-full">
   <div className={`${border} p-5 flex flex-col gap-8`}>
     <div className="flex justify-center items-center gap-8">
       <div className="text-white">current sol {currentSol}</div>
@@ -191,4 +258,5 @@ export default function Index() {
       </div>
     </div>
   </div>
-</div> */}
+</div> */
+}

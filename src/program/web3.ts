@@ -19,6 +19,7 @@ import { errorAlert } from "@/components/others/Toast";
 import { execTx } from "./transaction";
 import { claimTX, createPoolTX, stakeSolTX } from "@/utils/util";
 import { claimInfo, createPoolInfo, stakeSolInfo } from "@/utils/types";
+import { WalletSignTransactionError } from "@solana/wallet-adapter-base";
 
 export const commitmentLevel = "processed";
 
@@ -199,7 +200,7 @@ export const createPoolApi = async (
     //  const result = await createPoolTX(value);
     //  console.log("🚀 ~ result:", result);
 
-    return res;
+    return res.timeDuration;
   } catch (error) {
     console.log("Error ", error);
     return false;
@@ -275,58 +276,74 @@ export const stakingSolApi = async (
     const blockhash = await connection.getLatestBlockhash();
     transaction.recentBlockhash = blockhash.blockhash;
 
-    const txid = await execTx(transaction, connection, wallet, "confirmed");
-    console.log("🚀 ~ staking sol lApi ~ txid:", txid);
-    if (!txid) {
-      return false;
+    try {
+      const txid = await execTx(transaction, connection, wallet, "confirmed");
+      console.log("🚀 ~ staking sol lApi ~ txid:", txid);
+
+      if (!txid) {
+        return false; // if txid is empty or undefined
+      }
+
+      // Transaction succeeded, continue logic here
+      //console
+      let gameStateAccount = await program.account.gameState.fetch(gameState);
+      console.log("claim gamestate", gameStateAccount);
+      const readableTime = new Date(
+        Number(gameStateAccount.atStartTime.toString()) * 1000
+      );
+      console.log("Start Time:", readableTime.toLocaleString());
+      console.log("Game ID:", gameStateAccount.gameId.toNumber());
+      console.log("Pot Balance:", gameStateAccount.potBalance.toNumber());
+      console.log("Last Sender:", gameStateAccount.lastSender.toBase58());
+      console.log("Second Sender:", gameStateAccount.secondSender.toBase58());
+      console.log("Third Sender:", gameStateAccount.thirdSender.toBase58());
+      console.log("Dev Wallet:", gameStateAccount.developerWallet.toBase58());
+      console.log(
+        "time duration second",
+        gameStateAccount.timeDuration.toNumber()
+      );
+
+      const res = {
+        gameId: gameStateAccount.gameId.toNumber(),
+        potBalance: gameStateAccount.potBalance.toNumber(),
+        readableStartTime: new Date(
+          Number(gameStateAccount.atStartTime.toString()) * 1000
+        ).toLocaleString(),
+        lastSender: gameStateAccount.lastSender.toBase58(),
+        secondSender: gameStateAccount.secondSender.toBase58(),
+        thirdSender: gameStateAccount.thirdSender.toBase58(),
+        timeDuration: gameStateAccount.timeDuration.toNumber(),
+      };
+
+      const value: stakeSolInfo = {
+        user: wallet.publicKey.toBase58(),
+        game_id: res.gameId,
+        pot_balance: res.potBalance,
+        stake_sol: currentSol,
+        last_sender: res.lastSender,
+        second_sender: res.secondSender,
+        third_sender: res.thirdSender,
+        at_start_time: new Date(
+          Number(gameStateAccount.atStartTime.toString()) * 1000
+        ),
+        game_time_duration: res.timeDuration,
+      };
+      // const rerult = await stakeSolTX(value);
+      // console.log("🚀 ~ rerult:", rerult);
+
+      return res.timeDuration;
+    } catch (error: any) {
+      if (
+        error.name === "WalletSignTransactionError" ||
+        error.message?.toLowerCase().includes("user rejected")
+      ) {
+        console.warn("⚠️ User rejected the transaction.");
+        return false; // return false if user didn’t sign
+      }
+
+      console.error("❌ Unexpected error during transaction:", error);
+      return false; // catch-all for other errors
     }
-    //console
-    let gameStateAccount = await program.account.gameState.fetch(gameState);
-    console.log("claim gamestate", gameStateAccount);
-    const readableTime = new Date(
-      Number(gameStateAccount.atStartTime.toString()) * 1000
-    );
-    console.log("Start Time:", readableTime.toLocaleString());
-    console.log("Game ID:", gameStateAccount.gameId.toNumber());
-    console.log("Pot Balance:", gameStateAccount.potBalance.toNumber());
-    console.log("Last Sender:", gameStateAccount.lastSender.toBase58());
-    console.log("Second Sender:", gameStateAccount.secondSender.toBase58());
-    console.log("Third Sender:", gameStateAccount.thirdSender.toBase58());
-    console.log("Dev Wallet:", gameStateAccount.developerWallet.toBase58());
-    console.log(
-      "time duration second",
-      gameStateAccount.timeDuration.toNumber()
-    );
-
-    const res = {
-      gameId: gameStateAccount.gameId.toNumber(),
-      potBalance: gameStateAccount.potBalance.toNumber(),
-      readableStartTime: new Date(
-        Number(gameStateAccount.atStartTime.toString()) * 1000
-      ).toLocaleString(),
-      lastSender: gameStateAccount.lastSender.toBase58(),
-      secondSender: gameStateAccount.secondSender.toBase58(),
-      thirdSender: gameStateAccount.thirdSender.toBase58(),
-      timeDuration: gameStateAccount.timeDuration.toNumber(),
-    };
-
-    const value: stakeSolInfo = {
-      user: wallet.publicKey.toBase58(),
-      game_id: res.gameId,
-      pot_balance: res.potBalance,
-      stake_sol: currentSol,
-      last_sender: res.lastSender,
-      second_sender: res.secondSender,
-      third_sender: res.thirdSender,
-      at_start_time: new Date(
-        Number(gameStateAccount.atStartTime.toString()) * 1000
-      ),
-      game_time_duration: res.timeDuration,
-    };
-    // const rerult = await stakeSolTX(value);
-    // console.log("🚀 ~ rerult:", rerult);
-
-    return res;
   } catch (error) {
     console.log("Error ", error);
     return false;
@@ -462,7 +479,7 @@ export const claimApi = async (wallet: WalletContextState) => {
     };
     // const result = await claimTX(value);
     // console.log("result", result);
-    return res;
+    return true;
   } catch (error) {
     console.log("Error ", error);
     return false;

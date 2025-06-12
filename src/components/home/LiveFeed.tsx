@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react'
-import LiveFeedCard from '../others/LiveFeedCard'
-import { liveFeedTestData } from '@/config/ConfigData'
+import React, { useEffect, useState } from "react";
+import LiveFeedCard from "../others/LiveFeedCard";
+import { liveFeedTestData } from "@/config/ConfigData";
 
 export default function LiveFeed() {
   const [data, setData] = useState<any[]>();
@@ -17,15 +17,21 @@ export default function LiveFeed() {
   //   getData()
   // }, [])
 
+  // useEffect(() => {
+  //   if (socket) {
+  //     setData((prev) => [[socket, ...prev]]);
+  //   }
+  // }, [socket]);
+
   return (
-    <div className='w-full h-full py-9 md:py-16 justify-center items-center flex flex-col px-4'>
-      <div className='w-full h-full max-w-[1000px] mx-auto'>
-        <div className="flex flex-col gap-6 w-full justify-center items-start">
-          <p className="flex flex-col text-white/80 text-[28px] sm:text-[36px] font-bold uppercase">
+    <div className="flex flex-col justify-center items-center px-4 py-9 md:py-16 w-full h-full">
+      <div className="mx-auto w-full max-w-[1000px] h-full">
+        <div className="flex flex-col justify-center items-start gap-6 w-full">
+          <p className="flex flex-col font-bold text-[28px] text-white/80 sm:text-[36px] uppercase">
             live feed
           </p>
-          <div className="flex flex-col w-full border-[3px] sm:border-[5px] max-h-[365px] md:max-h-[625px] border-[#2F88D4] shadow-xl shadow-black/50 object-cover overflow-hidden bg-[#07245C] rounded-[8px] sm:rounded-[15px] ">
-            <div className='flex flex-col w-full h-full py-2 sm:py-4 px-3 sm:px-12 gap-2 sm:gap-4 overflow-y-scroll'>
+          <div className="flex flex-col bg-[#07245C] shadow-black/50 shadow-xl border-[#2F88D4] border-[3px] sm:border-[5px] rounded-[8px] sm:rounded-[15px] w-full max-h-[365px] md:max-h-[625px] object-cover overflow-hidden">
+            <div className="flex flex-col gap-2 sm:gap-4 px-3 sm:px-12 py-2 sm:py-4 w-full h-full overflow-y-scroll">
               {liveFeedTestData.map((item, index) => (
                 <LiveFeedCard key={index} {...item} />
               ))}
@@ -34,5 +40,5 @@ export default function LiveFeed() {
         </div>
       </div>
     </div>
-  )
+  );
 }

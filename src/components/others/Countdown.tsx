@@ -1,6 +1,6 @@
-import FlipClockCountdown from '@leenguyen/react-flip-clock-countdown';
-import React, { useEffect, useState } from 'react';
-import '@leenguyen/react-flip-clock-countdown/dist/index.css';
+import FlipClockCountdown from "@leenguyen/react-flip-clock-countdown";
+import React, { useEffect, useState } from "react";
+import "@leenguyen/react-flip-clock-countdown/dist/index.css";
 
 interface CountdownProps {
   targetTime: number; // The target time in milliseconds
@@ -15,8 +15,8 @@ const Countdown: React.FC<CountdownProps> = ({ targetTime }) => {
     };
 
     handleResize(); // run on mount
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   return (
@@ -31,9 +31,9 @@ const Countdown: React.FC<CountdownProps> = ({ targetTime }) => {
         borderRadius: 10,
         background: "#1B2940",
       }}
-      dividerStyle={{ color: '#293A56', height: 1 }}
+      dividerStyle={{ color: "#293A56", height: 1 }}
       separatorStyle={{
-        color: '#1B2940',
+        color: "#1B2940",
         size: isMobile ? 10 : 18,
       }}
       duration={0.5}

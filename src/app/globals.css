@@ -10,12 +10,14 @@
 
 @font-face {
   font-family: "Luckiest";
-  src: url("/assets/fonts/Luckiest_Guy/LuckiestGuy-Regular.ttf") format("truetype");
+  src: url("/assets/fonts/Luckiest_Guy/LuckiestGuy-Regular.ttf")
+    format("truetype");
 }
 
 @font-face {
   font-family: "Playpen_Sans";
-  src: url("/assets/fonts/Playpen_Sans/PlaypenSans-VariableFont_wght.ttf") format("truetype");
+  src: url("/assets/fonts/Playpen_Sans/PlaypenSans-VariableFont_wght.ttf")
+    format("truetype");
 }
 
 /* Remove number input spinners in Chrome, Safari, Edge */
@@ -45,7 +47,7 @@ input[type="number"] {
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, #1C9FF6 0%, #9945FF 100%);
+  background: linear-gradient(180deg, #1c9ff6 0%, #9945ff 100%);
   border-radius: 5px;
 }
 
@@ -106,71 +108,12 @@ body {
   background-color: #26c3ff33 !important;
 }
 
-@keyframes bounce {
-
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-
-  50% {
-    transform: translateY(-20px);
-  }
-}
-
-/* Reflection effect */
-.reflected-text-wrapper {
-  position: relative;
-}
-
-.reflected-text {
-  display: inline-block;
-  position: absolute;
-  top: 100%;
-  /* Position the reflection below the text */
-  left: 0;
-  right: 0;
-  opacity: 0.5;
-  transform: scaleY(-1);
-  /* Flip the text vertically */
-  transform-origin: top;
-  filter: blur(1px);
-  /* Optional: Adds a blur to make it more realistic */
-  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.3), transparent);
-  -webkit-mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1), transparent);
-  /* Fade out effect */
-}
-
 .harlow {
   font-family: "Luckiest";
 }
 
 .playpen {
   font-family: "Playpen_Sans";
-}
-
-@keyframes image-bounce {
-
-  0%,
-  20%,
-  50%,
-  80%,
-  100% {
-    transform: translateY(0);
-  }
-
-  40% {
-    transform: translateY(-30px);
-  }
-
-  60% {
-    transform: translateY(-15px);
-  }
-}
-
-.image-bounce {
-  display: inline-block;
-  animation: bounce 2s infinite;
 }
 
 .flip-clock {

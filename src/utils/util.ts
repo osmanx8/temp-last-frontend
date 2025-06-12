@@ -31,3 +31,16 @@ export const claimTX = async (value: claimInfo) => {
   );
   return res;
 };
+
+export const fetchTX = async () => {
+  console.log("herre fetch api");
+  try {
+    const res = await axios.get(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/fetch`
+    );
+    console.log("arrive fetch data...", res);
+    return res;
+  } catch (err) {
+    console.log("er", err);
+  }
+};
