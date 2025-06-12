@@ -1,5 +1,5 @@
 import axios from "axios";
-const BACKEND_URL = "http://localhost:5000/api";
+const BACKEND_URL = "http://146.19.215.151:5000/api";
 /**
  * @return last Winner user model and his tx
  */
@@ -13,11 +13,9 @@ export const getLastWinnerData = async () => {
   }
 };
 
-export const getLeaderBoardData = async (isDaily: boolean) => {
+export const getLeaderBoardData = async () => {
   try {
-    const response = await axios.get(
-      `${BACKEND_URL}/leaderboard?isDaily=${isDaily}`
-    );
+    const response = await axios.get(`${BACKEND_URL}/leaderboard`);
     return response.data;
   } catch (error) {
     console.error("Error fetching leader board data:", error);
@@ -35,11 +33,9 @@ export const getLiveFeedData = async () => {
   }
 };
 
-export const getGameStates = async (isDaily: boolean) => {
+export const getGameStats = async () => {
   try {
-    const response = await axios.get(
-      `${BACKEND_URL}/game-stats?isDaily=${isDaily}`
-    );
+    const response = await axios.get(`${BACKEND_URL}/game-stats`);
     return response.data;
   } catch (error) {
     console.error("Error fetching game stats:", error);
@@ -47,7 +43,7 @@ export const getGameStates = async (isDaily: boolean) => {
   }
 };
 
-export const getReferralCode = async (user: string) => {
+export const getReferralCodeAmount = async (user: string) => {
   try {
     const response = await axios.post(`${BACKEND_URL}/referral`, {
       user,

@@ -2,7 +2,6 @@
 import Link from "next/link";
 import { useContext, useEffect, useRef, useState } from "react";
 import UserContext from "@/context/UserContext";
-import { stakingSolApi } from "@/program/web3";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { errorAlert, successAlert } from "../others/Toast";
 import { set } from "@coral-xyz/anchor/dist/cjs/utils/features";
@@ -127,23 +126,23 @@ export default function Index() {
     const fetchData = async () => {
       try {
         console.log("refresh....");
-        const res = await fetchTX();
-        if (!res) return;
-        console.log("reult", res);
-        setAtStartTime(res.data.startTime);
-        setTimeDuration(res.data.timeDuration);
-        setDailyRoundsPlayed(res.data.dailyroundsPlayed);
-        setAllRoundsPlayed(res.data.allroundsPlayed);
-        setDailyActivePlayers(res.data.dailyactivePlayers);
-        setAllActivePlayers(res.data.allactivePlayers);
-        setDailyTotalSolWon(res.data.dailytotalSolWon);
-        setAllTotalSolWon(res.data.alltotalSolWon);
-        setDailyBiggestPrice(res.data.dailybiggestPrice);
-        setAllBiggestPrice(res.data.allbiggestPrice);
-        setPotBalance(res.data.currentPot);
-        setLastWiner(res.data.lastWiner);
-        setWinners(res.data.winners);
-        setStakers(res.data.stakers);
+        // const res = await fetchTX();
+        // if (!res) return;
+        // console.log("reult", res);
+        // setAtStartTime(res.data.startTime);
+        // setTimeDuration(res.data.timeDuration);
+        // setDailyRoundsPlayed(res.data.dailyroundsPlayed);
+        // setAllRoundsPlayed(res.data.allroundsPlayed);
+        // setDailyActivePlayers(res.data.dailyactivePlayers);
+        // setAllActivePlayers(res.data.allactivePlayers);
+        // setDailyTotalSolWon(res.data.dailytotalSolWon);
+        // setAllTotalSolWon(res.data.alltotalSolWon);
+        // setDailyBiggestPrice(res.data.dailybiggestPrice);
+        // setAllBiggestPrice(res.data.allbiggestPrice);
+        // setPotBalance(res.data.currentPot);
+        // setLastWiner(res.data.lastWiner);
+        // setWinners(res.data.winners);
+        // setStakers(res.data.stakers);
         ////||||
       } catch (err) {
         console.log("fetch res.err", err);

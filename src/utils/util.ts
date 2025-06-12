@@ -44,3 +44,29 @@ export const fetchTX = async () => {
     console.log("er", err);
   }
 };
+
+export const formatStake = (
+  data: {
+    amount: number;
+    time: string;
+    user: string;
+  }[]
+) => {
+  return data.map((value) => {
+    const date = new Date(value.time);
+
+    const formattedTime = `${date.getDate()} / ${String(
+      date.getHours()
+    ).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}:${String(
+      date.getSeconds()
+    ).padStart(2, "0")}`;
+    const shortAddress = `${value.user.slice(0, 4)}...${value.user.slice(-4)}`;
+    const formattedAmount = `${value.amount} SOL`;
+
+    return {
+      time: formattedTime,
+      user: shortAddress,
+      amount: formattedAmount,
+    };
+  });
+};

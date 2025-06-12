@@ -37,7 +37,7 @@ const UserContext = createContext({
   setLeftTime: (value: number) => {},
   atStartTime: "",
   setAtStartTime: (value: string) => {},
-  timeDuration: 0,
+  timeDuration: 100,
   setTimeDuration: (value: number) => {},
   allbiggestPrice: 0,
   setAllBiggestPrice: (value: number) => {},

@@ -9,6 +9,7 @@ import { stakingSol } from "@/program/web3";
 import { errorAlert, successAlert } from "../others/Toast";
 import UserContext from "@/context/UserContext";
 import { useWallet } from "@solana/wallet-adapter-react";
+import { getLastWinnerData } from "@/api";
 
 export default function PotCard() {
   const {
@@ -24,6 +25,18 @@ export default function PotCard() {
   const [currentJackpotTime, setCurrentJackpotTime] = useState<Date | null>(
     null
   );
+  const [lastWinner, setLastWinner] = useState<string>("");
+  const [lastWinAmount, setLastWinAmount] = useState<number>(0);
+  useEffect(() => {
+    getLastWinner();
+  }, []);
+
+  const getLastWinner = async () => {
+    const data = await getLastWinnerData();
+    if (!data) return;
+    setLastWinner(data.lastWinner);
+    setLastWinAmount(data.amount);
+  };
 
   useEffect(() => {
     if (progress) {
@@ -179,10 +192,10 @@ export default function PotCard() {
               </p>
             </div>
             <p className="flex flex-row justify-center items-center gap-2 w-full text-[#D1D5DB]/70 text-sm text-center playpen">
-              Last Winner: <strong>Hs82...3k9d</strong>
+              Last Winner: <strong>{lastWinner}</strong>
             </p>
             <p className="flex flex-row justify-center items-center gap-2 w-full text-[#D1D5DB]/70 text-sm text-center playpen">
-              Won: <strong>28.5 SOL</strong>
+              Won: <strong>{lastWinAmount} SOL</strong>
             </p>
           </div>
         </div>

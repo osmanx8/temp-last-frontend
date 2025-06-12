@@ -1,26 +1,46 @@
 import React, { useEffect, useState } from "react";
-import Image from "next/image";
-import SelectButtonBg from "@/../public/assets/images/game_stats_button.webp";
 import LiveGameStatsCard from "../others/LiveGameStatsCard";
+import { getGameStats } from "@/api";
 
 export default function LiveGameStats() {
-  const [filerData, setFilterData] = useState<boolean>(false);
-  const [RoundAmount, setRoundAmount] = useState<number>(12);
-  const [activeAmount, setActiveAmount] = useState<number>(84);
-  const [totalSolAmount, setTotalSolAmount] = useState<number>(126.5);
-  const [BigGestPrice, setBigGestPrice] = useState<number>(28.5);
+  const [filterData, setFilterData] = useState<boolean>(false);
+  const [isDaily, setIsDaily] = useState<boolean>(true);
+  const [dailyStats, setDailyStats] = useState<{
+    rounds: number;
+    playerNum: number;
+    totalSolWon: number;
+    biggestNum: number;
+  }>();
+  const [allTimeStats, setAllTimeStats] = useState<{
+    rounds: number;
+    playerNum: number;
+    totalSolWon: number;
+    biggestNum: number;
+  }>();
 
-  // const getData = () => {
-  //   try {
+  useEffect(() => {
+    getGameStatshandle();
+  }, []);
 
-  //   } catch (error) {
+  const getGameStatshandle = async () => {
+    const data = await getGameStats();
+    if (!data) return;
 
-  //   }
-  // }
+    setDailyStats({
+      rounds: data.dayGameStats.roundPlayed,
+      playerNum: data.dayGameStats.activePlayers,
+      totalSolWon: data.dayGameStats.totalSolWon,
+      biggestNum: data.dayGameStats.biggestWon,
+    });
+    setAllTimeStats({
+      rounds: data.allgameStats.roundPlayed,
+      playerNum: data.allgameStats.activePlayers,
+      totalSolWon: data.allgameStats.totalSolWon,
+      biggestNum: data.allgameStats.biggestWon,
+    });
+  };
 
-  // useEffect(() => {
-  //   getData();
-  // }, [filerData])
+  const stats = isDaily ? dailyStats : allTimeStats;
 
   return (
     <div className="flex flex-col justify-center items-center px-4 py-9 md:py-16 w-full h-full">
@@ -31,22 +51,22 @@ export default function LiveGameStats() {
           </p>
           <div className="relative flex flex-row justify-center items-center gap-2 bg-gradient-to-t from-[#67CCFF] to-[#0194DE] shadow-[-6px_6px_0px_#1B5DB1,8px_12px_20px_rgba(0,0,0,0.4),inset_8px_-8px_8px_#00000022,inset_-8px_8px_8px_#ffffff22] px-2 py-1 border-[#8CCFFC] border-[3px] sm:border-[5px] rounded-[8px] sm:rounded-[13px] max-w-[360px]">
             <div
-              onClick={() => setFilterData(false)}
+              onClick={() => setIsDaily(true)}
               className={`${
-                filerData
-                  ? ""
-                  : "bg-gradient-to-t from-[#264FD9] to-[#19348F] shadow-[inset_8px_-8px_8px_#00000022,inset_-8px_8px_8px_#ffffff22]"
-              } flex flex-col rounded-[8px] sm:rounded-[13px] w-[115px] sm:w-[155px] py-2 md:py-4 h-full justify-center items-center text-[#CED6EF] playpen z-10 cursor-pointer font-semibold text-xl`}
+                isDaily
+                  ? "bg-gradient-to-t from-[#264FD9] to-[#19348F] shadow-[inset_8px_-8px_8px_#00000022,inset_-8px_8px_8px_#ffffff22]"
+                  : ""
+              } flex flex-col rounded-[8px] sm:rounded-[13px] w-[135px] sm:w-[175px] py-2 md:py-4 h-full justify-center items-center text-[#CED6EF] playpen z-10 cursor-pointer font-semibold text-xl`}
             >
               Daily
             </div>
             <div
-              onClick={() => setFilterData(true)}
+              onClick={() => setIsDaily(false)}
               className={`${
-                filerData
-                  ? "bg-gradient-to-t from-[#264FD9] to-[#19348F] shadow-[inset_8px_-8px_8px_#00000022,inset_-8px_8px_8px_#ffffff22]"
-                  : ""
-              } flex flex-col rounded-[8px] sm:rounded-[13px] w-[135px] sm:w-[175px] py-2 md:py-4 h-full justify-center items-center text-[#CED6EF] playpen z-10 cursor-pointer font-semibold text-xl`}
+                isDaily
+                  ? ""
+                  : "bg-gradient-to-t from-[#264FD9] to-[#19348F] shadow-[inset_8px_-8px_8px_#00000022,inset_-8px_8px_8px_#ffffff22]"
+              } flex flex-col rounded-[8px] sm:rounded-[13px] w-[115px] sm:w-[155px] py-2 md:py-4 h-full justify-center items-center text-[#CED6EF] playpen z-10 cursor-pointer font-semibold text-xl`}
             >
               All-Time
             </div>
@@ -54,26 +74,26 @@ export default function LiveGameStats() {
           <div className="flex flex-col justify-center items-center gap-3 md:gap-9 bg-gradient-to-t from-[#162D7B] to-[#2852E1] shadow-[-5px_5px_0px_#1B5DB1,8px_12px_20px_rgba(0,0,0,0.4),inset_8px_-8px_8px_#00000022,inset_-8px_8px_8px_#ffffff22] p-2.5 md:p-[28px] lg:p-[50px] border-[#83D6F9] border-[5px] rounded-[15px] w-full h-full">
             <div className="flex sm:flex-row flex-col justify-center items-center gap-3 md:gap-9 w-full">
               <LiveGameStatsCard
-                amount={RoundAmount}
+                amount={stats?.rounds ?? 0}
                 title="Rounds Played"
-                text={filerData ? "All-Time" : "Today"}
+                text={isDaily ? "Today" : "All-Time"}
               />
               <LiveGameStatsCard
-                amount={activeAmount}
+                amount={stats?.playerNum ?? 0}
                 title="Active Players"
-                text={filerData ? "All-Time" : "Today"}
+                text={isDaily ? "Today" : "All-Time"}
               />
             </div>
             <div className="flex sm:flex-row flex-col justify-center items-center gap-3 md:gap-9 w-full">
               <LiveGameStatsCard
-                amount={totalSolAmount}
+                amount={stats?.totalSolWon ?? 0}
                 title="Total sol won!!"
-                text={filerData ? "All-Time" : "Today"}
+                text={isDaily ? "Today" : "All-Time"}
               />
               <LiveGameStatsCard
-                amount={BigGestPrice}
+                amount={stats?.biggestNum ?? 0}
                 title="Biggest Price"
-                text={filerData ? "All-Time" : "Today"}
+                text={isDaily ? "Today" : "All-Time"}
               />
             </div>
           </div>
