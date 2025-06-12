@@ -21,7 +21,7 @@ import { claimTX, createPoolTX, stakeSolTX } from "@/utils/util";
 import { claimInfo, createPoolInfo, stakeSolInfo } from "@/utils/types";
 import { WalletSignTransactionError } from "@solana/wallet-adapter-base";
 
-export const commitmentLevel = "processed";
+export const commitmentLevel = "confirmed";
 
 export const rcpUrl =
   process.env.NEXT_PUBLIC_SOLANA_RPC || clusterApiUrl("devnet");
@@ -29,7 +29,7 @@ export const connection = new Connection(rcpUrl, commitmentLevel);
 export const LastSendProgramId = new PublicKey(LAST_SENDER_PROGRAM_ID);
 export const pumpProgramInterface = JSON.parse(JSON.stringify(idl));
 
-export const initializeApi = async (wallet: WalletContextState) => {
+export const initialize = async (wallet: WalletContextState) => {
   console.log("clicked initialize");
   const provider = new anchor.AnchorProvider(connection, wallet as any, {
     preflightCommitment: "confirmed",
@@ -62,18 +62,17 @@ export const initializeApi = async (wallet: WalletContextState) => {
       })
     );
 
-    const initGame = await program.methods
+    const initGameIx = await program.methods
       .initialize()
       .accounts({ admin: wallet.publicKey })
       .instruction();
 
-    transaction.add(initGame);
+    transaction.add(initGameIx);
     transaction.feePayer = wallet.publicKey;
     const blockhash = await connection.getLatestBlockhash();
     transaction.recentBlockhash = blockhash.blockhash;
-    console.log("here");
     const txid = await execTx(transaction, connection, wallet, "confirmed");
-    console.log("🚀 ~ initializeApi ~ txid:", txid);
+    console.log("🚀 ~ initialize ~ txid:", txid);
 
     if (txid == null) {
       return false;
@@ -90,7 +89,7 @@ export const initializeApi = async (wallet: WalletContextState) => {
   }
 };
 
-export const createPoolApi = async (
+export const createGame = async (
   wallet: WalletContextState,
   gameTime: number
 ) => {
@@ -207,7 +206,7 @@ export const createPoolApi = async (
   }
 };
 
-export const stakingSolApi = async (
+export const stakingSol = async (
   wallet: WalletContextState,
   currentSol: number
 ) => {
@@ -350,8 +349,8 @@ export const stakingSolApi = async (
   }
 };
 
-export const claimApi = async (wallet: WalletContextState) => {
-  console.log("claimApi call");
+export const claim = async (wallet: WalletContextState) => {
+  console.log("claim call");
   const provider = new anchor.AnchorProvider(connection, wallet as any, {
     preflightCommitment: "confirmed",
   });
@@ -429,13 +428,13 @@ export const claimApi = async (wallet: WalletContextState) => {
 
     transaction.add(claim);
     transaction.feePayer = wallet.publicKey;
-    console.log("🚀 ~ claimApi ~ publicKey:", wallet.publicKey.toBase58());
+    console.log("🚀 ~ claim ~ publicKey:", wallet.publicKey.toBase58());
 
     const blockhash = await connection.getLatestBlockhash();
     transaction.recentBlockhash = blockhash.blockhash;
 
     const txid = await execTx(transaction, connection, wallet, "confirmed");
-    console.log("🚀 ~ claimApi ~ txid:", txid);
+    console.log("🚀 ~ claim ~ txid:", txid);
     if (txid == null) {
       return false;
     }

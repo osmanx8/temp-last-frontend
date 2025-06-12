@@ -31,9 +31,9 @@ export default function LiveGameStats() {
           </p>
           <div className="relative flex flex-row justify-center items-center gap-2 bg-gradient-to-t from-[#67CCFF] to-[#0194DE] shadow-[-6px_6px_0px_#1B5DB1,8px_12px_20px_rgba(0,0,0,0.4),inset_8px_-8px_8px_#00000022,inset_-8px_8px_8px_#ffffff22] px-2 py-1 border-[#8CCFFC] border-[3px] sm:border-[5px] rounded-[8px] sm:rounded-[13px] max-w-[360px]">
             <div
-              onClick={() => setFilterData(true)}
+              onClick={() => setFilterData(false)}
               className={`${
-                !filerData
+                filerData
                   ? ""
                   : "bg-gradient-to-t from-[#264FD9] to-[#19348F] shadow-[inset_8px_-8px_8px_#00000022,inset_-8px_8px_8px_#ffffff22]"
               } flex flex-col rounded-[8px] sm:rounded-[13px] w-[115px] sm:w-[155px] py-2 md:py-4 h-full justify-center items-center text-[#CED6EF] playpen z-10 cursor-pointer font-semibold text-xl`}
@@ -41,9 +41,9 @@ export default function LiveGameStats() {
               Daily
             </div>
             <div
-              onClick={() => setFilterData(false)}
+              onClick={() => setFilterData(true)}
               className={`${
-                !filerData
+                filerData
                   ? "bg-gradient-to-t from-[#264FD9] to-[#19348F] shadow-[inset_8px_-8px_8px_#00000022,inset_-8px_8px_8px_#ffffff22]"
                   : ""
               } flex flex-col rounded-[8px] sm:rounded-[13px] w-[135px] sm:w-[175px] py-2 md:py-4 h-full justify-center items-center text-[#CED6EF] playpen z-10 cursor-pointer font-semibold text-xl`}
@@ -56,24 +56,24 @@ export default function LiveGameStats() {
               <LiveGameStatsCard
                 amount={RoundAmount}
                 title="Rounds Played"
-                text={!filerData ? "All-Time" : "Today"}
+                text={filerData ? "All-Time" : "Today"}
               />
               <LiveGameStatsCard
                 amount={activeAmount}
                 title="Active Players"
-                text={!filerData ? "All-Time" : "Today"}
+                text={filerData ? "All-Time" : "Today"}
               />
             </div>
             <div className="flex sm:flex-row flex-col justify-center items-center gap-3 md:gap-9 w-full">
               <LiveGameStatsCard
                 amount={totalSolAmount}
                 title="Total sol won!!"
-                text={!filerData ? "All-Time" : "Today"}
+                text={filerData ? "All-Time" : "Today"}
               />
               <LiveGameStatsCard
                 amount={BigGestPrice}
                 title="Biggest Price"
-                text={!filerData ? "All-Time" : "Today"}
+                text={filerData ? "All-Time" : "Today"}
               />
             </div>
           </div>

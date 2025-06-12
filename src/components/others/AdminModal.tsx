@@ -1,5 +1,5 @@
 import UserContext from "@/context/UserContext";
-import { claimApi, createPoolApi, initializeApi } from "@/program/web3";
+import { claim, createGame, initialize } from "@/program/web3";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { IoIosCloseCircleOutline } from "react-icons/io";
@@ -12,25 +12,25 @@ export default function AdminModal() {
   const [inputTime, setInputTime] = useState<number>(0);
   const wallet = useWallet();
 
-  const createPot = async () => {
-    console.log("click create pool");
-    let res = await createPoolApi(wallet, inputTime * 60);
+  const createGameHandler = async () => {
+    console.log("click create game");
+    let res = await createGame(wallet, inputTime * 60);
     if (res == "WalletError" || !res) {
-      errorAlert("createPool was failed.");
+      errorAlert("creategame was failed.");
       return;
     }
     if (typeof res === "number") {
       setTimeDuration(res); // ✅ Only set if it's a number
-      successAlert("createPool success!");
+      successAlert("creategame success!");
       return res;
     } else {
-      errorAlert("Unexpected response type from createPoolApi");
+      errorAlert("Unexpected response type from creategame");
       return;
     }
   };
 
-  const initialize = async () => {
-    const res = await initializeApi(wallet);
+  const initializeHandle = async () => {
+    const res = await initialize(wallet);
     if (res == "WalletError" || !res) {
       errorAlert("initialize was failed.");
       return;
@@ -39,8 +39,8 @@ export default function AdminModal() {
     return;
   };
 
-  const claim = async () => {
-    const res = await claimApi(wallet);
+  const claimHandle = async () => {
+    const res = await claim(wallet);
     if (res == "WalletError" || !res) {
       errorAlert("claim was failed.");
       return false;
@@ -93,7 +93,7 @@ export default function AdminModal() {
         <div className="flex flex-row justify-center items-center gap-5 py-2 w-full">
           <div className="flex justify-around">
             <div
-              onClick={() => createPot()}
+              onClick={() => createGameHandler()}
               className={`bg-[#784FD8] text-white cursor-pointer px-4 2xs:px-5 md:px-6 py-1 2xs:py-2 md:py-3 border-[3px] border-[#83D6F9] rounded-[8px] text-[12px] 2xs:text-sm md:text-lg`}
             >
               Create
@@ -102,7 +102,7 @@ export default function AdminModal() {
 
           <div className="flex justify-around">
             <div
-              onClick={() => initialize()}
+              onClick={() => initializeHandle()}
               className={`bg-[#784FD8] text-white cursor-pointer px-4 2xs:px-5 md:px-6 py-1 2xs:py-2 md:py-3 border-[3px] border-[#83D6F9] rounded-[8px] text-[12px] 2xs:text-sm md:text-lg`}
             >
               Initialize
@@ -111,7 +111,7 @@ export default function AdminModal() {
 
           <div className="flex justify-around">
             <div
-              onClick={() => claim()}
+              onClick={() => claimHandle()}
               className={`bg-[#784FD8] text-white cursor-pointer px-4 2xs:px-5 md:px-6 py-1 2xs:py-2 md:py-3 border-[3px] border-[#83D6F9] rounded-[8px] text-[12px] 2xs:text-sm md:text-lg`}
             >
               Claim

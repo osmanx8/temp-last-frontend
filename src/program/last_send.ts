@@ -5,7 +5,7 @@
  * IDL can be found at `target/idl/last_send.json`.
  */
 export type LastSend = {
-  "address": "6H3Urhfm4emdo6rC48npwrtgHGU7CsjyfShvSJdJHx4A",
+  "address": "HVhDVqBQdotw1SwhcWT5TdHWQo51eT2Kdar4VFdRGt4e",
   "metadata": {
     "name": "lastSend",
     "version": "0.1.0",

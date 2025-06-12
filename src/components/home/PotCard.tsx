@@ -5,7 +5,7 @@ import { BsLightningFill } from "react-icons/bs";
 import SolIcon from "@/../public/assets/images/sol-icon.webp";
 import CurrentPotIcon from "@/../public/assets/images/current_top.webp";
 import Countdown from "../others/Countdown";
-import { stakingSolApi } from "@/program/web3";
+import { stakingSol } from "@/program/web3";
 import { errorAlert, successAlert } from "../others/Toast";
 import UserContext from "@/context/UserContext";
 import { useWallet } from "@solana/wallet-adapter-react";
@@ -72,7 +72,7 @@ export default function PotCard() {
   };
   const sendSol = async () => {
     console.log("clicked send sol button");
-    const res = await stakingSolApi(wallet, solAmount * 10 ** 9);
+    const res = await stakingSol(wallet, solAmount * 10 ** 9);
     if (res == "WalletError" || !res) {
       errorAlert("stake sol was failed.");
       return;
