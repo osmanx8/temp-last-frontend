@@ -9,7 +9,13 @@ import { stakingSol } from "@/program/web3";
 import { errorAlert, successAlert } from "../others/Toast";
 import UserContext from "@/context/UserContext";
 import { useWallet } from "@solana/wallet-adapter-react";
-import { getLastWinnerData } from "@/api";
+import { getLastWinnerData, getPotBalance, getTime } from "@/api";
+import { io, Socket } from "socket.io-client";
+
+let socket: Socket | undefined = undefined;
+if (typeof window !== "undefined") {
+  socket = io(process.env.NEXT_PUBLIC_BACKEND_URL!);
+}
 
 export default function PotCard() {
   const {
@@ -17,35 +23,73 @@ export default function PotCard() {
     setTimeDuration,
     setAtStartTime,
     timeDuration,
+    atStartTime,
     progress,
     setPotBalance,
   } = useContext(UserContext);
   const [solAmount, setSolAmount] = useState<number>(0);
-  const [currentSolAmount, setCuttenSolAmount] = useState<number>(42.54);
-  const [currentJackpotTime, setCurrentJackpotTime] = useState<Date | null>(
-    null
-  );
+  const [currentSolAmount, setCuttenSolAmount] = useState<number>(0);
   const [lastWinner, setLastWinner] = useState<string>("");
   const [lastWinAmount, setLastWinAmount] = useState<number>(0);
+  const [targetTime, setTargetTime] = useState<number>(0);
+
   useEffect(() => {
     getLastWinner();
+    getTimeHandle();
   }, []);
 
   const getLastWinner = async () => {
+    const data1 = await getPotBalance();
+    console.log("potBalance", data1.potBalance);
+    setCuttenSolAmount(Number((data1.potBalance / 10 ** 9).toFixed(3)));
+
     const data = await getLastWinnerData();
+    console.log("last-winner-data", data);
     if (!data) return;
     setLastWinner(data.lastWinner);
-    setLastWinAmount(data.amount);
+    setLastWinAmount(Number((data.amount / 10 ** 9).toFixed(3)));
   };
+  if (socket) {
+    socket.on("stakeSol", () => {
+      getLastWinner();
+      getTimeHandle();
+      console.log("socket event in Porcard...");
+    });
+    socket.on("disconnect", (reason) => {
+      console.log("[socket] Disconnected:", reason);
+    });
 
-  useEffect(() => {
-    if (progress) {
-      const futureTime = new Date(Date.now() + timeDuration * 1000);
-      setCurrentJackpotTime(futureTime);
+    socket.on("connect_error", (error) => {
+      if (socket!.active) {
+        // temporary failure, the socket will automatically try to reconnect
+      } else {
+        // the connection was denied by the server
+        // in that case, `socket.connect()` must be manually called in order to reconnect
+        console.log("[socket] Error:", error.message);
+      }
+    });
+  }
+
+  const getTimeHandle = async () => {
+    const data = await getTime();
+    console.log("get time", data);
+    console.log("now time", Date.now());
+    if (!data) return;
+    const now = Date.now(); // milliseconds
+    const startTime = data.atStartTime * 1000; // convert seconds to milliseconds
+    const duration = data.timeDuration * 1000; // convert seconds to milliseconds
+
+    const endTime = startTime + duration;
+    const remainTime = endTime - now;
+
+    console.log("remainTime", remainTime);
+
+    if (remainTime < 0) {
+      setTargetTime(0);
     } else {
-      setCurrentJackpotTime(null); // reset when progress is false
+      setTargetTime(now + remainTime); // OR just setTargetTime(endTime)
     }
-  }, [progress, timeDuration]);
+  };
 
   const wallet = useWallet();
   const handleChangeSolAmount = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -62,21 +106,6 @@ export default function PotCard() {
     }
   }, [timeDuration]);
 
-  useEffect(() => {
-    if (time <= 0) return;
-    if (progress) {
-      const interval = setInterval(() => {
-        setTime((prev) => {
-          if (prev <= 1) {
-            clearInterval(interval);
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
-      return () => clearInterval(interval);
-    }
-  }, [time, progress]);
   const removeSolAmount = () => {
     if (solAmount < 0.2) {
       return;
@@ -84,6 +113,10 @@ export default function PotCard() {
     setSolAmount((prev) => prev - 0.1);
   };
   const sendSol = async () => {
+    // if (targetTime == 0) {
+    //   errorAlert("Game is already finished");
+    //   return;
+    // }
     console.log("clicked send sol button");
     const res = await stakingSol(wallet, solAmount * 10 ** 9);
     if (res == "WalletError" || !res) {
@@ -91,7 +124,6 @@ export default function PotCard() {
       return;
     } else {
       successAlert("stake sol success!");
-      setTimeDuration(res);
       // const { gameId, potBalance, readableStartTime, timeDuration } = res;
       // // setGameIndex(res.gameId);
       // setGameIndex(gameId);
@@ -118,11 +150,7 @@ export default function PotCard() {
                 time until jackpot
               </p>
               <div className="flex flex-col justify-center items-center w-full h-[100px] md:h-[128px] text-4xl">
-                <Countdown
-                  targetTime={
-                    currentJackpotTime ? currentJackpotTime.getTime() : 0
-                  }
-                />
+                <Countdown targetTime={targetTime ? targetTime : 0} />
               </div>
               <div className="flex flex-col justify-center items-center w-full playpen">
                 <div className="flex sm:flex-row flex-col gap-2 bg-gradient-to-t from-[#67CCFF] to-[#0194DE] shadow-[-4px_4px_0px_#1B5DB1,8px_12px_20px_rgba(0,0,0,0.4)] p-2 border-[#8CCFFC] border-[3px] md:border-[5px] rounded-[8px] md:rounded-[15px] max-w-[400px]">

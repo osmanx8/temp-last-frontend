@@ -1,6 +1,12 @@
 import React, { useEffect, useState } from "react";
 import LiveGameStatsCard from "../others/LiveGameStatsCard";
 import { getGameStats } from "@/api";
+import { io, Socket } from "socket.io-client";
+
+let socket: Socket | undefined = undefined;
+if (typeof window !== "undefined") {
+  socket = io(process.env.NEXT_PUBLIC_BACKEND_URL!);
+}
 
 export default function LiveGameStats() {
   const [filterData, setFilterData] = useState<boolean>(false);
@@ -24,21 +30,44 @@ export default function LiveGameStats() {
 
   const getGameStatshandle = async () => {
     const data = await getGameStats();
+    console.log("live game stats", data);
     if (!data) return;
 
     setDailyStats({
       rounds: data.dayGameStats.roundPlayed,
       playerNum: data.dayGameStats.activePlayers,
-      totalSolWon: data.dayGameStats.totalSolWon,
-      biggestNum: data.dayGameStats.biggestWon,
+      totalSolWon: Number(data.dayGameStats.totalSolWon.toFixed(4)),
+      biggestNum: Number(data.dayGameStats.biggestWon.toFixed(4)),
     });
+
     setAllTimeStats({
       rounds: data.allgameStats.roundPlayed,
       playerNum: data.allgameStats.activePlayers,
-      totalSolWon: data.allgameStats.totalSolWon,
-      biggestNum: data.allgameStats.biggestWon,
+      totalSolWon: Number(data.allgameStats.totalSolWon.toFixed(4)),
+      biggestNum: Number(data.allgameStats.biggestWon.toFixed(4)),
     });
   };
+
+  if (socket) {
+    socket.on("stakeSol", async () => {
+      console.log("socket event in Live Game Stats");
+      await getGameStatshandle();
+    });
+
+    socket.on("disconnect", (reason) => {
+      console.log("[socket] Disconnected:", reason);
+    });
+
+    socket.on("connect_error", (error) => {
+      if (socket!.active) {
+        // temporary failure, the socket will automatically try to reconnect
+      } else {
+        // the connection was denied by the server
+        // in that case, `socket.connect()` must be manually called in order to reconnect
+        console.log("[socket] Error:", error.message);
+      }
+    });
+  }
 
   const stats = isDaily ? dailyStats : allTimeStats;
 

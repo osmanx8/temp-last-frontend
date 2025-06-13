@@ -5,6 +5,7 @@ const BACKEND_URL = "http://146.19.215.151:5000/api";
  */
 export const getLastWinnerData = async () => {
   try {
+    console.log("arrive here last winner");
     const response = await axios.get(`${BACKEND_URL}/last-winner`);
     return response.data;
   } catch (error) {
@@ -51,6 +52,26 @@ export const getReferralCodeAmount = async (user: string) => {
     return response.data;
   } catch (error) {
     console.error("Error fetching referral code:", error);
+    return null;
+  }
+};
+
+export const getTime = async () => {
+  try {
+    const response = await axios.get(`${BACKEND_URL}/get-time`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching game time:", error);
+    return null;
+  }
+};
+
+export const getPotBalance = async () => {
+  try {
+    const response = await axios.get(`${BACKEND_URL}/get-Pot`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching current pot balalance:", error);
     return null;
   }
 };

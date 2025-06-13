@@ -38,3 +38,11 @@ export interface LiveFeedCardData {
   address: string;
   amount: string;
 }
+
+export type GameData = {
+  gameId: number;
+  gameTimeDuration: number;
+  stakedSol: number;
+  solFromGameBefore: number;
+  createdAt: string;
+};

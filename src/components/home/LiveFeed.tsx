@@ -3,6 +3,12 @@ import LiveFeedCard from "../others/LiveFeedCard";
 import { liveFeedTestData } from "@/config/ConfigData";
 import { getLiveFeedData } from "@/api";
 import { formatStake } from "@/utils/util";
+import { io, Socket } from "socket.io-client";
+
+let socket: Socket | undefined = undefined;
+if (typeof window !== "undefined") {
+  socket = io(process.env.NEXT_PUBLIC_BACKEND_URL!);
+}
 
 export default function LiveFeed() {
   const [feedData, setFeedData] =
@@ -19,6 +25,28 @@ export default function LiveFeed() {
     setFeedData(formattedData);
   };
 
+  if (socket) {
+    socket.on("stakeSol", async () => {
+      console.log("socket event in LiveFeed");
+      await getLiveFeed();
+    });
+
+    socket.on("disconnect", (reason) => {
+      console.log("[socket] Disconnected:", reason);
+    });
+
+    socket.on("connect_error", (error) => {
+      if (socket!.active) {
+        // temporary failure, the socket will automatically try to reconnect
+      } else {
+        // the connection was denied by the server
+        // in that case, `socket.connect()` must be manually called in order to reconnect
+        console.log("[socket] Error:", error.message);
+      }
+    });
+  }
+
+  if (!feedData || feedData.length == 0) return;
   return (
     <div className="flex flex-col justify-center items-center px-4 py-9 md:py-16 w-full h-full">
       <div className="mx-auto w-full max-w-[1000px] h-full">

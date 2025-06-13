@@ -20,6 +20,8 @@ import { execTx } from "./transaction";
 import { claimTX, createPoolTX, stakeSolTX } from "@/utils/util";
 import { claimInfo, createPoolInfo, stakeSolInfo } from "@/utils/types";
 import { WalletSignTransactionError } from "@solana/wallet-adapter-base";
+import { useContext } from "react";
+import UserContext from "@/context/UserContext";
 
 export const commitmentLevel = "confirmed";
 
@@ -74,7 +76,7 @@ export const initialize = async (wallet: WalletContextState) => {
     const txid = await execTx(transaction, connection, wallet, "confirmed");
     console.log("🚀 ~ initialize ~ txid:", txid);
 
-    if (txid == null) {
+    if (txid == null || txid == false) {
       return false;
     }
     const globalStateAccount = await program.account.globalState.fetch(
@@ -156,7 +158,7 @@ export const createGame = async (
 
     const txid = await execTx(transaction, connection, wallet, "confirmed");
     console.log("🚀 ~ cratePoolApi ~ txid:", txid);
-    if (txid == null) {
+    if (txid == null || txid == false) {
       return false;
     }
     //console
@@ -279,7 +281,7 @@ export const stakingSol = async (
       const txid = await execTx(transaction, connection, wallet, "confirmed");
       console.log("🚀 ~ staking sol lApi ~ txid:", txid);
 
-      if (!txid) {
+      if (!txid || txid == null) {
         return false; // if txid is empty or undefined
       }
 
@@ -435,7 +437,7 @@ export const claim = async (wallet: WalletContextState) => {
 
     const txid = await execTx(transaction, connection, wallet, "confirmed");
     console.log("🚀 ~ claim ~ txid:", txid);
-    if (txid == null) {
+    if (txid == null || txid == false) {
       return false;
     }
     //console

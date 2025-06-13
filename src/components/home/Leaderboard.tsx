@@ -3,7 +3,12 @@ import KingCard from "../others/KingCard";
 import { kingCardTestData } from "@/config/ConfigData";
 import { KingCardData } from "@/utils/types";
 import { getLeaderBoardData } from "@/api";
+import { io, Socket } from "socket.io-client";
 
+let socket: Socket | undefined = undefined;
+if (typeof window !== "undefined") {
+  socket = io(process.env.NEXT_PUBLIC_BACKEND_URL!);
+}
 export default function Leaderboard() {
   const [isCurrentShow, setShowCurrent] = useState<boolean>(true);
   const [currentData, setCurrentData] = useState<
@@ -23,6 +28,27 @@ export default function Leaderboard() {
     setCurrentData(data.currentRound);
     setAllTimeData(data.allTime);
   };
+
+  if (socket) {
+    socket.on("stakeSol", async () => {
+      console.log("socket event in Leaderboard");
+      await getLeaderBoard();
+    });
+
+    socket.on("disconnect", (reason) => {
+      console.log("[socket] Disconnected:", reason);
+    });
+
+    socket.on("connect_error", (error) => {
+      if (socket!.active) {
+        // temporary failure, the socket will automatically try to reconnect
+      } else {
+        // the connection was denied by the server
+        // in that case, `socket.connect()` must be manually called in order to reconnect
+        console.log("[socket] Error:", error.message);
+      }
+    });
+  }
 
   return (
     <div className="flex flex-col justify-center items-center gap-6 sm:gap-16 px-4 py-12 sm:py-28 w-full h-full">
