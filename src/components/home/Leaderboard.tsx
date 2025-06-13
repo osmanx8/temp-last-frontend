@@ -31,10 +31,16 @@ export default function Leaderboard() {
 
   if (socket) {
     socket.on("stakeSol", async () => {
-      console.log("socket event in Leaderboard");
+      console.log("socket StakeSol event in Leaderboard");
       await getLeaderBoard();
     });
-
+    socket.on("newGameCreated ", async () => {
+      console.log("socket GameCreate event in Leaderboard");
+      setCurrentData([]);
+    });
+    socket.on("claim ", async () => {
+      await getLeaderBoard();
+    });
     socket.on("disconnect", (reason) => {
       console.log("[socket] Disconnected:", reason);
     });

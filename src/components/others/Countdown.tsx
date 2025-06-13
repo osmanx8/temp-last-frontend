@@ -39,7 +39,7 @@ const Countdown: React.FC<CountdownProps> = ({ targetTime }) => {
       duration={0.5}
       renderMap={[false, false, true, true]}
     >
-      Finished
+      Deposite SOL for starging Game
     </FlipClockCountdown>
   );
 };

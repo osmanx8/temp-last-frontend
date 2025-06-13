@@ -30,6 +30,13 @@ export default function LiveFeed() {
       console.log("socket event in LiveFeed");
       await getLiveFeed();
     });
+    socket.on("newGameCreated", async () => {
+      console.log("socket Create Game event in LiveFeed");
+      await getLiveFeed();
+    });
+    socket.on("claim", async () => {
+      await getLiveFeed();
+    });
 
     socket.on("disconnect", (reason) => {
       console.log("[socket] Disconnected:", reason);

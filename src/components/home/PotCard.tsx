@@ -25,6 +25,7 @@ export default function PotCard() {
     timeDuration,
     atStartTime,
     progress,
+    setProgress,
     setPotBalance,
   } = useContext(UserContext);
   const [solAmount, setSolAmount] = useState<number>(0);
@@ -50,11 +51,21 @@ export default function PotCard() {
     setLastWinAmount(Number((data.amount / 10 ** 9).toFixed(3)));
   };
   if (socket) {
-    socket.on("stakeSol", () => {
+    socket.on("stakeSol", async () => {
+      setProgress(true);
       getLastWinner();
       getTimeHandle();
       console.log("socket event in Porcard...");
     });
+    socket.on("newGameCreated", async () => {
+      setProgress(false);
+      await getLastWinner();
+      await getTimeHandle();
+    });
+    socket.on("claim", () => {
+      setCuttenSolAmount(0);
+    });
+
     socket.on("disconnect", (reason) => {
       console.log("[socket] Disconnected:", reason);
     });
@@ -84,7 +95,7 @@ export default function PotCard() {
 
     console.log("remainTime", remainTime);
 
-    if (remainTime < 0) {
+    if (remainTime < 0 && !progress) {
       setTargetTime(0);
     } else {
       setTargetTime(now + remainTime); // OR just setTargetTime(endTime)

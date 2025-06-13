@@ -50,9 +50,16 @@ export default function LiveGameStats() {
 
   if (socket) {
     socket.on("stakeSol", async () => {
-      console.log("socket event in Live Game Stats");
+      console.log("socket stakeSol event in Live Game Stats");
       await getGameStatshandle();
     });
+    socket.on("claim", async () => {
+      await getGameStatshandle();
+    });
+    // socket.on("newGameCreated ", async () => {
+    //   console.log("socket Create Game event in Live Game Stats");
+    //   await getGameStatshandle();
+    // });
 
     socket.on("disconnect", (reason) => {
       console.log("[socket] Disconnected:", reason);
